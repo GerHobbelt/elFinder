@@ -204,10 +204,9 @@ class elFinder {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	public function __construct($opts) {
-		if (session_id() == '') {
-			session_start();
+        if (session_id() == '') {
+		    register_shutdown_function('session_write_close'); //to insure if ajax call fails that elFinder does not hang on session_start
 		}
-
 		$this->time  = $this->utime();
 		$this->debug = (isset($opts['debug']) && $opts['debug'] ? true : false);
 		$this->timeout = (isset($opts['timeout']) ? $opts['timeout'] : 0);
@@ -519,7 +518,12 @@ class elFinder {
 	 * @author Dmitry (dio) Levashov
 	 */
 	protected function getNetVolumes() {
-		return isset($_SESSION[$this->netVolumesSessionKey]) && is_array($_SESSION[$this->netVolumesSessionKey]) ? $_SESSION[$this->netVolumesSessionKey] : array();
+		if (session_id() == '') {
+			session_start();
+		}
+		$result = isset($_SESSION[$this->netVolumesSessionKey]) && is_array($_SESSION[$this->netVolumesSessionKey]) ? $_SESSION[$this->netVolumesSessionKey] : array();
+		session_write_close();
+		return $result;
 	}
 
 	/**
@@ -530,7 +534,11 @@ class elFinder {
 	 * @author Dmitry (dio) Levashov
 	 */
 	protected function saveNetVolumes($volumes) {
+		if (session_id() == '') {
+			session_start();
+		}
 		$_SESSION[$this->netVolumesSessionKey] = $volumes;
+		session_write_close();
 	}
 
 	/**
