@@ -247,17 +247,17 @@ class elFinderVolumeFTP extends elFinderVolumeDriver {
 	 * @return array
 	 * @author Dmitry Levashov
 	 **/
-protected function parseRaw($raw) {
-    $stat = array();
+	protected function parseRaw($raw) {
+		$stat = array();
 
-    /*
-     * Check to see if what was returned matches a standard unix ls listing
-     */
-    if (preg_match('/^([a-z\-]{10}) +(\d+) +(\w+) +(\w+) +(\d+) +(\w+) +(\w+) +([\d\:]+) +(.+)/', $raw, $info)) {
-        $this->ftpOsUnix = true;
+	    /*
+	     * Check to see if what was returned matches a standard unix ls listing
+	     */
+	    if (preg_match('/^([a-z\-]{10}) +(\d+) +(\w+) +(\w+) +(\d+) +(\w+) +(\w+) +([\d\:]+) +(.+)/', $raw, $info)) {
+    	    $this->ftpOsUnix = true;
 
-        // Remove the regex pattern in the first element of the array
-        array_shift($info);
+	        // Remove the regex pattern in the first element of the array
+    	    array_shift($info);
 			
 			$stat['ts'] = strtotime($info[5].' '.$info[6].' '.$info[7]);
 			if (empty($stat['ts'])) {
@@ -527,7 +527,7 @@ protected function parseRaw($raw) {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _stat($path) {
-		$raw = ftp_raw($this->connect, 'MLST '. $path);
+		$raw = ftp_raw($this->connect, 'MLST ' . $path);
 
 		if (is_array($raw) && count($raw) > 1 && substr(trim($raw[0]), 0, 1) == 2) {
 		    if (substr($raw[1], 0, 4) == '250-') {
@@ -660,7 +660,7 @@ protected function parseRaw($raw) {
 	
 	/**
 	 * Return object width and height
-	 * Ususaly used for images, but can be realize for video etc...
+	 * Usualy used for images, but can be realize for video etc...
 	 *
 	 * @param  string  $path  file path
 	 * @param  string  $mime  file mime type
@@ -672,7 +672,6 @@ protected function parseRaw($raw) {
 		return strpos($mime, 'image') === 0 && ($s = @getimagesize(realpath('../files/'.utf8_decode($path)))) !== false
 			? $s[0].'x'.$s[1] 
 			: false;
-		//return false;
 	}
 	
 	/******************** file/dir content *********************/

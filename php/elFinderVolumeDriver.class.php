@@ -1537,7 +1537,7 @@ abstract class elFinderVolumeDriver {
 			}
 			$method = $rmSrc ? 'move' : 'copy';
 
-			if( $path = $this->$method($source, $destination, $name) ){
+			if ($path = $this->$method($source, $destination, $name)) {
 				$stat = $this->stat($path);
 				$stat['source'] = $source;
 				return $stat;

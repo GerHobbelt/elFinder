@@ -350,6 +350,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 			? $s[0].'x'.$s[1] 
 			: false;
 	}
+	
 	/******************** file/dir content *********************/
 	
 	/**
@@ -399,6 +400,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 				$files[] = $path.DIRECTORY_SEPARATOR.$name;
 			}
 		}
+
 		return $files;
 	}
 		
