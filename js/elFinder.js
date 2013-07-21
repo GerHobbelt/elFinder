@@ -1002,6 +1002,11 @@ window.elFinder = function(node, opts) {
 					self.uplMaxFile = response.uplMaxFile;
 				}
 
+				if (cmd == 'open' && !!data.init) {
+					self.uplMaxSize = self.returnBytes(response.uplMaxSize);
+					self.uplMaxFile = response.uplMaxFile;
+				}
+
 				dfrd.resolve(response);
 				response.debug && self.debug('backend-debug', response.debug);
 			},
