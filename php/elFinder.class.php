@@ -170,7 +170,7 @@ class elFinder {
 	const ERROR_UPLOAD_FILE_SIZE  = 'errUploadFileSize';   // 'File exceeds maximum allowed size.'
 	const ERROR_UPLOAD_FILE_MIME  = 'errUploadMime';       // 'File type not allowed.'
 	const ERROR_UPLOAD_TRANSFER   = 'errUploadTransfer';   // '"$1" transfer error.'
-	// const ERROR_ACCESS_DENIED     = 'errAccess';
+	const ERROR_ACCESS_DENIED     = 'errAccess';           // 'Access denied' // eg. in command rm
 	const ERROR_NOT_REPLACE       = 'errNotReplace';       // Object "$1" already exists at this location and can not be replaced with object of another type.
 	const ERROR_SAVE              = 'errSave';
 	const ERROR_EXTRACT           = 'errExtract';
@@ -204,10 +204,9 @@ class elFinder {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	public function __construct($opts) {
-		if (session_id() == '') {
-			session_start();
+        if (session_id() == '') {
+		    register_shutdown_function('session_write_close'); //to insure if ajax call fails that elFinder does not hang on session_start
 		}
-
 		$this->time  = $this->utime();
 		$this->debug = (isset($opts['debug']) && $opts['debug'] ? true : false);
 		$this->timeout = (isset($opts['timeout']) ? $opts['timeout'] : 0);
@@ -519,7 +518,12 @@ class elFinder {
 	 * @author Dmitry (dio) Levashov
 	 */
 	protected function getNetVolumes() {
-		return isset($_SESSION[$this->netVolumesSessionKey]) && is_array($_SESSION[$this->netVolumesSessionKey]) ? $_SESSION[$this->netVolumesSessionKey] : array();
+		if (session_id() == '') {
+			session_start();
+		}
+		$result = isset($_SESSION[$this->netVolumesSessionKey]) && is_array($_SESSION[$this->netVolumesSessionKey]) ? $_SESSION[$this->netVolumesSessionKey] : array();
+		session_write_close();
+		return $result;
 	}
 
 	/**
@@ -530,7 +534,11 @@ class elFinder {
 	 * @author Dmitry (dio) Levashov
 	 */
 	protected function saveNetVolumes($volumes) {
+		if (session_id() == '') {
+			session_start();
+		}
 		$_SESSION[$this->netVolumesSessionKey] = $volumes;
+		session_write_close();
 	}
 
 	/**
