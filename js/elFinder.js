@@ -999,7 +999,7 @@ window.elFinder = function(node, opts) {
 
 				if (cmd == 'open' && !!data.init) {
 					self.uplMaxSize = self.returnBytes(response.uplMaxSize);
-					self.uplMaxFile = response.uplMaxFile;
+					self.uplMaxFile = !!response.uplMaxFile? parseInt(response.uplMaxFile) : 20;
 				}
 
 				if (cmd == 'open' && !!data.init) {
@@ -2134,7 +2134,7 @@ elFinder.prototype = {
 					var links;
 					while (m = regex.exec(str)) {
 						url = m[1].replace(/&amp;/g, '&');
-						if (url.match(/^http/) && $.inArray(url, ret) == -1) ret.push(url);
+						if (url.match(/^http|data:/) && $.inArray(url, ret) == -1) ret.push(url);
 					}
 					links = str.match(/<\/a>/i);
 					if (links && links.length == 1) {
