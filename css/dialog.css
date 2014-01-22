@@ -168,7 +168,6 @@
 .elfinder-info-tb td { white-space:nowrap; padding:2px; }
 
 .elfinder-info-tb tr td:first-child { text-align:right;  }
-
 .elfinder-info-tb span { float:left;}
 .elfinder-info-tb a { outline: none; text-decoration:underline; }
 .elfinder-info-tb a:hover { text-decoration:none; }

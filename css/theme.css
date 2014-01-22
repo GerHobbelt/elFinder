@@ -9,7 +9,7 @@
 .std42-dialog, .std42-dialog .ui-widget-content { background-color:#ededed; background-image:none; background-clip: content-box; }
 
 /* navbar */
-.elfinder .elfinder-navbar { background:#dde4eb; }
+.elfinder .elfinder-navbar {background: #dde4eb;}
 .elfinder-navbar .ui-state-hover  { background:transparent; border-color:transparent; }
 .elfinder-navbar .ui-state-active { background: #3875d7;    border-color:#3875d7; color:#fff; }
 .elfinder-navbar .elfinder-droppable-active {background:#A7C6E5 !important;}

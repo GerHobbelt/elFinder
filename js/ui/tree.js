@@ -186,7 +186,25 @@ $.fn.elfindertree = function(fm, opts) {
 			 */
 			itemhtml = function(dir) {
 				dir.name = fm.escape(dir.i18 || dir.name);
-				
+
+				tpl = fm.res('tpl', 'navdir');
+
+				if (dir.root == "groupe_libre"){
+					tpl = fm.res('tpl', 'navdirgpl');
+				}
+
+				if (dir.root == "etablissement"){
+					tpl = fm.res('tpl', 'navdirclg');
+				}
+
+				var name = dir.name.split('.');
+				if (name[name.length-1] == 'rendu'){
+					tpl = fm.res('tpl', 'navdirrendu');
+				}
+
+				if (name[name.length-1] == 'profs'){
+					tpl = fm.res('tpl', 'navdirprofs');		
+				}
 				return tpl.replace(/(?:\{([a-z]+)\})/ig, function(m, key) {
 					return dir[key] || (replace[key] ? replace[key](dir) : '');
 				});
@@ -199,7 +217,7 @@ $.fn.elfindertree = function(fm, opts) {
 			 * @return Array
 			 */
 			filter = function(files) {
-				return $.map(files||[], function(f) { return f.mime == 'directory' ? f : null });
+				return $.map(files||[], function(f) { return f.mime == 'directory' ? f  : null });
 			},
 			
 			/**

@@ -11,7 +11,7 @@ elFinder.prototype.resources = {
 		hover       : 'ui-state-hover',
 		active      : 'ui-state-active',
 		disabled    : 'ui-state-disabled',
-		draggable   : 'ui-draggable',
+		// draggable   : 'ui-draggable',
 		droppable   : 'ui-droppable',
 		adroppable  : 'elfinder-droppable-active',
 		cwdfile     : 'elfinder-cwd-file',
@@ -33,7 +33,11 @@ elFinder.prototype.resources = {
 		symlink    : '<span class="elfinder-symlink"/>',
 		navicon    : '<span class="elfinder-nav-icon"/>',
 		navspinner : '<span class="elfinder-navbar-spinner"/>',
-		navdir     : '<div class="elfinder-navbar-wrapper"><span id="{id}" class="ui-corner-all elfinder-navbar-dir {cssclass}"><span class="elfinder-navbar-arrow"/><span class="elfinder-navbar-icon"/>{symlink}{permissions}{name}</span><div class="elfinder-navbar-subtree"/></div>'
+		navdir     : '<div class="elfinder-navbar-wrapper"><span id="{id}" class="ui-corner-all elfinder-navbar-dir {cssclass}"><span class="elfinder-navbar-arrow"/><span class="elfinder-navbar-icon"/>{symlink}{permissions}{name}</span><div class="elfinder-navbar-subtree"/></div>',
+		navdirgpl  : '<div class="elfinder-navbar-wrapper"><span id="{id}" class="ui-corner-all elfinder-navbar-dir {cssclass}"><span class="elfinder-navbar-arrow"/><span class="elfinder-navbar-icon elfinder-navbar-icon-gpl"/>{symlink}{permissions}{name}</span><div class="elfinder-navbar-subtree"/></div>',
+		navdirclg  : '<div class="elfinder-navbar-wrapper"><span id="{id}" class="ui-corner-all elfinder-navbar-dir {cssclass}"><span class="elfinder-navbar-arrow"/><span class="elfinder-navbar-icon elfinder-navbar-icon-clg"/>{symlink}{permissions}{name}</span><div class="elfinder-navbar-subtree"/></div>',
+		navdirrendu: '<div class="elfinder-navbar-wrapper"><span id="{id}" class="ui-corner-all elfinder-navbar-dir {cssclass}"><span class="elfinder-navbar-arrow"/><span class="elfinder-navbar-icon elfinder-navbar-icon-rendu"/>{symlink}{permissions}{name}</span><div class="elfinder-navbar-subtree"/></div>',
+		navdirprofs: '<div class="elfinder-navbar-wrapper"><span id="{id}" class="ui-corner-all elfinder-navbar-dir {cssclass}"><span class="elfinder-navbar-arrow"/><span class="elfinder-navbar-icon elfinder-navbar-icon-profs"/>{symlink}{permissions}{name}</span><div class="elfinder-navbar-subtree"/></div>'
 		
 	},
 	

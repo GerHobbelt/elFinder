@@ -212,6 +212,7 @@ elFinder.prototype.commands.quicklook = function() {
 				preview = self.preview,
 				file    = e.file,
 				tpl     = '<div class="elfinder-quicklook-info-data">{value}</div>',
+				classFile,
 				tmb;
 
 			if (file) {
@@ -226,7 +227,11 @@ elFinder.prototype.commands.quicklook = function() {
 						+ (file.mime == 'directory' ? '' : tpl.replace(/\{value\}/, fm.formatSize(file.size)))
 						+ tpl.replace(/\{value\}/, fm.i18n('modify')+': '+ fm.formatDate(file))
 					)
-				icon.addClass('elfinder-cwd-icon ui-corner-all '+fm.mime2class(file.mime));
+				classFile = fm.mime2classdirectory(file.mime, file.name);
+				if (classFile == null){
+					classFile = fm.mime2class(file.mime);
+				}
+				icon.addClass('elfinder-cwd-icon ui-corner-all '+classFile);
 
 				if (file.tmb) {
 					$('<img/>')

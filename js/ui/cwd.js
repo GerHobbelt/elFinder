@@ -151,6 +151,10 @@ $.fn.elfindercwd = function(fm, options) {
 					return f.mime == 'directory' ? 'directory' : '';
 				},
 				mime : function(f) {
+					var mime = fm.mime2classdirectory(f.mime, f.name);
+					if (mime != null) {
+						return mime;
+					}
 					return fm.mime2class(f.mime);
 				},
 				size : function(f) {
@@ -163,7 +167,7 @@ $.fn.elfindercwd = function(fm, options) {
 					return fm.mime2kind(f);
 				},
 				marker : function(f) {
-					return (f.alias || f.mime == 'symlink-broken' ? symlinkTpl : '')+(!f.read || !f.write ? permsTpl : '');
+					return (f.alias || f.mime == 'symlink-broken' ? symlinkTpl : '')+(!f.read || !f.write || f.doc_public ? permsTpl : '');
 				},
 				tooltip : function(f) {
 					var title = fm.formatDate(f) + (f.size > 0 ? ' ('+fm.formatSize(f.size)+')' : '');
@@ -735,6 +739,12 @@ $.fn.elfindercwd = function(fm, options) {
 				.delegate(fileSelector, 'touchmove.'+fm.namespace+' touchend.'+fm.namespace, function(e) {
 					clearTimeout($(this).data('longtap'));
 				})
+				.delegate(fileSelector, ' touchmove.'+fm.namespace+' touchend.'+fm.namespace, function(e) {
+					var $this = $(this),
+						target = list ? $this : $this.children();
+
+					$(target).draggable();
+				})
 				// attach draggable
 				.delegate(fileSelector, 'mouseenter.'+fm.namespace, function(e) {
 					var $this = $(this),
@@ -907,7 +917,11 @@ $.fn.elfindercwd = function(fm, options) {
 			  	e.preventDefault();
 				wrapper.removeClass(clDropActive);
 
-				e.dataTransfer && e.dataTransfer.files &&  e.dataTransfer.files.length && fm.exec('upload', {files : e.dataTransfer.files})//fm.upload({files : e.dataTransfer.files});
+				if(e.dataTransfer.getData('Text')){
+					e.dataTransfer && e.dataTransfer.getData('Text') &&  e.dataTransfer.getData('Text').length && fm.exec('upload', {files : e.dataTransfer.getData('Text')});
+				} else {
+					e.dataTransfer && e.dataTransfer.files &&  e.dataTransfer.files.length && fm.exec('upload', {files : e.dataTransfer.files})//fm.upload({files : e.dataTransfer.files});
+				}
 			}, false);
 		}
 

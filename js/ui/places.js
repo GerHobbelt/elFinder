@@ -47,7 +47,7 @@ $.fn.elfinderplaces = function(fm, opts) {
 				return $(tpl.replace(/\{id\}/, hash2id(dir.hash))
 						.replace(/\{name\}/, fm.escape(dir.name))
 						.replace(/\{cssclass\}/, fm.perms2class(dir))
-						.replace(/\{permissions\}/, !dir.read || !dir.write ? ptpl : '')
+						.replace(/\{permissions\}/, !dir.read || !dir.write || dir.doc_public ? ptpl : '')
 						.replace(/\{symlink\}/, ''));
 			},
 			/**

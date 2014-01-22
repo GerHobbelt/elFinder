@@ -59,7 +59,6 @@ elFinder.prototype.commands.info = function() {
 		}
 		var self    = this,
 			fm      = this.fm,
-			o       = this.options,
 			tpl     = this.tpl,
 			row     = tpl.row,
 			cnt     = files.length,
@@ -76,7 +75,7 @@ elFinder.prototype.commands.info = function() {
 			replSpinner = function(msg) { dialog.find('.'+spclass).parent().text(msg); },
 			id = fm.namespace+'-info-'+$.map(files, function(f) { return f.hash }).join('-'),
 			dialog = fm.getUI().find('#'+id), 
-			size, tmb, file, title, dcnt;
+			size, tmb, file, classFile, title, dcnt;
 			
 		if (!cnt) {
 			return $.Deferred().reject();
@@ -90,8 +89,11 @@ elFinder.prototype.commands.info = function() {
 			
 		if (cnt == 1) {
 			file  = files[0];
-			
-			view  = view.replace('{class}', fm.mime2class(file.mime));
+			classFile = fm.mime2classdirectory(file.mime, file.name);
+			if (classFile == null){
+				classFile = fm.mime2class(file.mime);
+			}
+			view  = view.replace('{class}', classFile);
 			title = tpl.itemTitle.replace('{name}', fm.escape(file.i18 || file.name)).replace('{kind}', fm.mime2kind(file));
 
 			if (file.tmb) {
@@ -110,16 +112,7 @@ elFinder.prototype.commands.info = function() {
 			content.push(row.replace(l, msg.size).replace(v, size));
 			file.alias && content.push(row.replace(l, msg.aliasfor).replace(v, file.alias));
 			content.push(row.replace(l, msg.path).replace(v, fm.escape(fm.path(file.hash, true))));
-			if (file.read) {
-				var href;
-				if (o.nullUrlDirLinkSelf && file.mime == 'directory' && file.url === null) {
-					var loc = window.location;
-					href = loc.pathname + loc.search + '#elf_' + file.hash;
-				} else {
-					href = fm.url(file.hash);
-				}
-				content.push(row.replace(l, msg.link).replace(v,  '<a href="'+href+'" target="_blank">'+file.name+'</a>'));
-			}
+			file.read && content.push(row.replace(l, msg.link).replace(v,  '<a href="'+fm.url(file.hash)+'" target="_blank">'+file.name+'</a>'));
 			
 			if (file.dim) { // old api
 				content.push(row.replace(l, msg.dim).replace(v, file.dim));

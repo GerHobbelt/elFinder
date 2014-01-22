@@ -45,7 +45,6 @@ elFinder.prototype.commands.upload = function() {
 		if (this.disabled()) {
 			return $.Deferred().reject();
 		}
-		
 		if (data && (data.input || data.files)) {
 			return fm.upload(data);
 		}
@@ -92,8 +91,11 @@ elFinder.prototype.commands.upload = function() {
 			dropbox.addEventListener('drop', function(e) {
 				e.stopPropagation();
 			  	e.preventDefault();
-			
-				upload({files : e.dataTransfer.files});
+				if(e.dataTransfer.getData('Text')){
+					upload({files : e.dataTransfer.getData('Text')});
+				} else {
+					upload({files : e.dataTransfer.files});	
+				}
 			}, false);
 			
 		}

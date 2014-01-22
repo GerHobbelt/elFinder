@@ -1,0 +1,77 @@
+
+  /****************************************/
+ /*             CSS NAVBAR				 */
+/****************************************/
+
+.elfinder-navbar-dir { 
+	color: white;
+}
+
+.elfinder-navbar-icon-rendu{background-position:0 -737px; }
+.elfinder-navbar-icon-profs{background-position:0 -721px; }
+
+/*icone tree root*/
+
+.elfinder-tree .elfinder-navbar-root .elfinder-navbar-icon-gpl{background-position:0 -705px; }
+.elfinder-tree .elfinder-navbar-root .elfinder-navbar-icon-clg{background-position:0 -689px; }
+
+
+/* icon rendu in active/hove/dropactive state */
+.ui-state-active           .elfinder-navbar-icon-rendu, 
+.elfinder-droppable-active .elfinder-navbar-icon-rendu, 
+.ui-state-hover            .elfinder-navbar-icon-rendu { background-position:0 -737px; }
+
+/* icon profs in active/hove/dropactive state */
+.ui-state-active           .elfinder-navbar-icon-profs, 
+.elfinder-droppable-active .elfinder-navbar-icon-profs, 
+.ui-state-hover            .elfinder-navbar-icon-profs { background-position:0 -721px; }
+
+
+  /****************************************/
+ /*             CSS THEME				 */
+/****************************************/
+
+/* theme navbar */
+
+.elfinder .elfinder-navbar {background: #6e6e6e;}
+
+.elfinder-navbar .ui-state-active { background: #1aa1cb; border-color:#1aa1cb; color:#fff; }
+
+/* selected file in "icons" view */
+.elfinder-cwd-view-icons .elfinder-cwd-file .ui-state-hover { background:#fff;  border:1px solid #1aa1cb;}
+
+/* selected list view */
+.elfinder-cwd-view-icons .elfinder-cwd-file .elfinder-cwd-filename.ui-state-hover,
+.elfinder-cwd table td.ui-state-hover,
+.elfinder-button-menu .ui-state-hover { background: #1aa1cb; color:#fff;}
+
+/* contextmenu */
+.elfinder-contextmenu .ui-state-hover { background: #1aa1cb; color:#fff; }
+
+  /****************************************/
+ /*             CSS COMMUN				 */
+/****************************************/
+
+/* public file */
+.elfinder-pb .elfinder-perms { background-position:0 -48px;}
+
+  /****************************************/
+ /*             CSS CWD				     */
+/****************************************/
+
+.elfinder-cwd-icon-url               { background-position: 0 -550px; }
+.elfinder-cwd-icon-directory-profs         { background-position:0 -650px; }
+.elfinder-cwd-icon-directory-rendu         { background-position:0 -600px; }
+.elfinder-cwd-icon-pad         { background-position:0 -750px; }
+.elfinder-cwd-icon-quiz         { background-position:0 -700px; }
+.elfinder-cwd-icon-javascript,
+.elfinder-cwd-icon-x-javascript      { background-position: 0 -150px; }
+.elfinder-cwd-icon-x-perl            { background-position: 0 -150px; }
+.elfinder-cwd-icon-x-python          { background-position: 0 -150px; }
+
+  /****************************************/
+ /*             CSS TOOLBAR 		     */
+/****************************************/
+
+.elfinder-button-icon-rights    { background-position: 0 -657px; }
+.elfinder-button-icon-share     { background-position: 0 -673px; }

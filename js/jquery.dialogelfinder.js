@@ -87,6 +87,9 @@ $.fn.dialogelfinder = function(opts) {
 		return $(this).getElFinder();
 	}
 
+	$(function(){
+	  $('#datepicker').datepicker();
+	});
 	return this;
 }
 

@@ -147,7 +147,6 @@
 .elfinder-cwd-icon-vnd-openxmlformats-officedocument-wordprocessingml-document,
 .elfinder-cwd-icon-vnd-openxmlformats-officedocument-wordprocessingml-template { background-position: 0 -500px; }
 .elfinder-cwd-icon-html              { background-position: 0 -550px; }
-.elfinder-cwd-icon-url               { background-position: 0 -550px; }
 .elfinder-cwd-icon-css               { background-position: 0 -600px; }
 .elfinder-cwd-icon-javascript, 
 .elfinder-cwd-icon-x-javascript      { background-position: 0 -650px; }
@@ -229,7 +228,7 @@
 	position:absolute;
 	top:50%;
 	margin-top:-8px;
-	background-image:url('../img/icons-small.png');
+	background-image:url(../img/icons-small.png);
 }
 /* icon in ltr/rtl enviroment */
 .elfinder-ltr .elfinder-cwd-view-list .elfinder-cwd-icon { left:0;  }

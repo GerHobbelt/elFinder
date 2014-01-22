@@ -1,0 +1,42 @@
+ul.tagit {
+  background: white;
+}
+ul.tagit li {
+  background: #DEE7F8;
+  color: #555;
+}
+
+ul.tagit li.tagit-new {
+  background: #ededed;
+  border: none;
+}
+ul.tagit li.tagit-choice-editable { 
+  background: #DEE7F8;
+  border: 1px solid #CAD8F3;
+  color: #555;
+}
+ul.tagit li.tagit-choice-editable:hover {
+ background: #bbcef1;
+ border-color: #6d95e0;
+}
+ul.tagit li.tagit-choice-new-editable {
+  background: #C8E7C8;
+  border: 1px solid #97C497;
+  color: #555;
+}
+
+ul.tagit li.tagit-choice-new-editable:hover {
+  background: #A1DAA1;
+  border-color: #539953;
+}
+ul.tagit li.tagit-choice input {
+  border:none;
+  background: #ededed;
+}
+
+
+ul.tagit input[type="text"] {
+  border:none;
+  background: #ededed;
+}
+

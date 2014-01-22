@@ -57,6 +57,7 @@ $.fn.elfinderdialog = function(opts) {
 					}
 				})
 				.bind('open', function() {
+					opts.modal && overlay.elfinderoverlay('show');
 					dialog.trigger('totop');
 					typeof(opts.open) == 'function' && $.proxy(opts.open, self[0])();
 
@@ -83,7 +84,7 @@ $.fn.elfinderdialog = function(opts) {
 					var dialogs = parent.find('.elfinder-dialog:visible'),
 						z = maxZIndex();
 					
-					$(this).data('modal') && overlay.elfinderoverlay('hide');
+					opts.modal && overlay.elfinderoverlay('hide');
 					
 					// get focus to next dialog
 					if (dialogs.length) {
@@ -109,11 +110,8 @@ $.fn.elfinderdialog = function(opts) {
 					}
 				})
 				.bind('totop', function() {
-					$(this).mousedown().find('.ui-button:first').focus().end().find(':text:first').focus();
-					$(this).data('modal') && overlay.elfinderoverlay('show');
-					overlay.zIndex($(this).zIndex());
-				})
-				.data({modal: opts.modal}),
+					$(this).mousedown().find('.ui-button:first').focus().end().find(':text:first').focus()
+				}),
 				maxZIndex = function() {
 					var z = parent.zIndex() + 10;
 					parent.find('.'+cldialog+':visible').each(function() {
