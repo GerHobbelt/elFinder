@@ -172,6 +172,13 @@ window.elFinder = function(node, opts) {
 		queue = [],
 
 		/**
+		 * Net drivers names
+		 *
+		 * @type Array
+		 **/
+		netDrivers = [],
+		
+		/**
 		 * Commands prototype
 		 *
 		 * @type Object
@@ -523,6 +530,7 @@ window.elFinder = function(node, opts) {
 		appendTo   : 'body',
 		addClasses : true,
 		delay      : 30,
+		distance   : 8,
 		revert     : true,
 		refreshPositions : true,
 		cursor     : 'move',
@@ -1766,10 +1774,21 @@ window.elFinder = function(node, opts) {
 		// exec shortcuts
 		.bind(keydown+' '+keypress, execShortcut);
 
+	// attach events to window
+	self.options.useBrowserHistory && $(window)
+		.on('popstate', function(ev) {
+			var target = ev.originalEvent.state && ev.originalEvent.state.thash;
+			target && !$.isEmptyObject(self.files()) && self.request({
+				data   : {cmd  : 'open', target : target, onhistory : 1},
+				notify : {type : 'open', cnt : 1, hideCnt : true},
+				syncOnFail : true
+			});
+		});
+	
 	// send initial request and start to pray >_<
 	this.trigger('init')
 		.request({
-			data        : {cmd : 'open', target : self.lastDir(), init : 1, tree : this.ui.tree ? 1 : 0},
+			data        : {cmd : 'open', target : self.startDir(), init : 1, tree : this.ui.tree ? 1 : 0}, 
 			preventDone : true,
 			notify      : {type : 'open', cnt : 1, hideCnt : true},
 			freeze      : true
@@ -2093,17 +2112,19 @@ elFinder.prototype = {
 						} else {
 							entry = items[i];
 						}
-						if (entry.isFile) {
-							paths.push('');
-							files.push(data.files.items[i].getAsFile());
-						} else if (entry.isDirectory) {
-							if (processing > 0) {
-								dirctorys.push(entry);
-							} else {
-								processing = 0;
-								dirReader = entry.createReader();
-								processing++;
-								readEntries(dirReader);
+						if (entry) {
+							if (entry.isFile) {
+								paths.push('');
+								files.push(data.files.items[i].getAsFile());
+							} else if (entry.isDirectory) {
+								if (processing > 0) {
+									dirctorys.push(entry);
+								} else {
+									processing = 0;
+									dirReader = entry.createReader();
+									processing++;
+									readEntries(dirReader);
+								}
 							}
 						}
 					}
@@ -2550,6 +2571,20 @@ elFinder.prototype = {
 		return value;
 	},
 
+	/**
+	 * Get start directory (by location.hash or last opened directory)
+	 * 
+	 * @return String
+	 */
+	startDir : function() {
+		var locHash = window.location.hash;
+		if (locHash && locHash.match(/^#elf_/)) {
+			return locHash.replace(/^#elf_/, '');
+		} else {
+			return this.lastDir();
+		}
+	},
+	
 	/**
 	 * Get/set last opened directory
 	 *
