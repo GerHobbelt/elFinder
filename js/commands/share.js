@@ -219,6 +219,7 @@ function include(array, value){
 }
 
 function autocomp(){
+ if ($("#myTabs").length > 0) {
   $('#myTabs').tagit(
   {
     allowSpaces: true,
@@ -297,13 +298,14 @@ function autocomp(){
     }
   }
   );
+ }
 }
 
 function createTag(){
   if(listTag.length != 0){
     for(var i = 0; i<listTag.length;i++){
       init = true;
-       $("#myTabs").tagit('createTag', listTag[i]);
+      if ($("#myTabs").length > 0)  $("#myTabs").tagit('createTag', listTag[i]);
     }
   }
   return false;
@@ -315,8 +317,9 @@ function removeAll(){
     if(index !=-1){
       listTag.splice(index, 1);
     }
-    $("#myTabs").tagit("removeTagByLabel", newListTag[i]);
+     if ($("#myTabs").length > 0) $("#myTabs").tagit("removeTagByLabel", newListTag[i]);
   }
   newListTag = [];
   return false;
 }
+
