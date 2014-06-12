@@ -13,7 +13,7 @@
  * })
  * @author Dmitry (dio) Levashov
  **/
-$.fn.dialogelfinder = function(opts) {
+$.fn.dialogelfinder = function(opts, overrides) {
 	var position = 'elfinderPosition',
 		destroy  = 'elfinderDestroyOnClose';
 	
@@ -27,7 +27,7 @@ $.fn.dialogelfinder = function(opts) {
 				.click(function(e) {
 					e.preventDefault();
 					
-					node.dialogelfinder('close');
+					node.dialogelfinder('close', overrides);
 				}),
 			node    = $(this).addClass('dialogelfinder')
 				.css('position', 'absolute')
@@ -46,7 +46,7 @@ $.fn.dialogelfinder = function(opts) {
 		
 		opts.position && node.data(position, opts.position);
 		
-		opts.autoOpen !== false && $(this).dialogelfinder('open');
+		opts.autoOpen !== false && $(this).dialogelfinder('open', overrides);
 
 	});
 	
@@ -59,14 +59,22 @@ $.fn.dialogelfinder = function(opts) {
 			zindex = 100;
 
 		if (node.is(':hidden')) {
-			
-			$('body').find(':visible').each(function() {
-				var $this = $(this), z;
-				
-				if (this !== node[0] && $this.css('position') == 'absolute' && (z = parseInt($this.zIndex())) > zindex) {
-					zindex = z + 1;
-				}
-			});
+			var zSet = false;
+			if(typeof overrides === 'object'){
+				if("zIndex" in overrides){
+					zindex = overrides.zIndex;
+					zSet = true;
+				}	
+			}
+			if(!zSet){
+				$('body').find(':visible').each(function() {
+					var $this = $(this), z;
+					
+					if (this !== node[0] && $this.css('position') == 'absolute' && (z = parseInt($this.zIndex())) > zindex) {
+						zindex = z + 1;
+					}
+				});
+			}
 
 			node.zIndex(zindex).css(pos).show().trigger('resize')
 
