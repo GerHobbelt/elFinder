@@ -6,7 +6,7 @@ elFinder.prototype.commands.share= function() {
     fm  = this.fm,
     msg = {
       doc_public   : fm.i18n('doc_public'),
-      doc_private  : fm.i18n('doc_private'),
+      make_public  : fm.i18n('make_public'),
       tag          : "Mots-clés(tags)",
       files        : fm.i18n('files'),
       folders      : fm.i18n('folders'),
@@ -24,7 +24,7 @@ elFinder.prototype.commands.share= function() {
     itemTitle  : '<strong>{name}</strong><span class="elfinder-info-kind">{kind}</span>',
     groupTitle : '<strong>{items}: {num}</strong>',
     row        : '<tr><td id="msgId">{label} : </td><td>{value}</td></tr>',
-    row_tag    : '<tr id="tagId" {disable}><td>{label} : </td><td><ul id="myTabs" >{value}</ul></td></tr>',
+    row_tag    : '<tr id="tagId" {disable} ><td>{label} : </td><td><ul id="myTabs" >{value}</ul></td></tr>',
     spinner    : '<span>{text}</span> <span class="'+spclass+'"/>'
   }
   this.updateOnSelect = false;
@@ -78,10 +78,10 @@ elFinder.prototype.commands.share= function() {
       dialog = fm.getUI().find('#'+id),
       size, tmb, file, title, dcnt,
       input_checked = function(id){
-        return "<input type='checkbox' id='"+id+"' checked='checked' onclick='hide(this)'>"
+        return "<input type='checkbox' id='"+id+"' class='js-switch js-check-change' checked='checked' onchange='hide(this)'>"
       },
       input = function(id){
-        return "<input type='checkbox' id='"+id+"' onclick='hide(this)'>"
+        return "<input type='checkbox' id='"+id+"' class='js-switch js-check-change' onchange='hide(this)'>"
       },
 
       save = function() {
@@ -124,21 +124,20 @@ elFinder.prototype.commands.share= function() {
       renduMime = renduMime[renduMime.length-1];
 
       doc_public = file.doc_public;
-      msgpub = msg.doc_public;
-      msgpriv = msg.doc_private;
 
       view  = view.replace('{class}', fm.mime2class(file.mime));
       title = tpl.itemTitle.replace('{name}', fm.escape(file.i18 || file.name)).replace('{kind}', fm.mime2kind(file));
       inputId = "publicId"+file.name;
       dialogId = id;
+      msgPbc = msg.doc_public;
+      make_pub = msg.make_public;
+
 
       if (doc_public == 1){
         var public_input = $(input_checked("publicId"+file.name));
-        msgPbc = msg.doc_public;
       } else {
         disable = "style='display:none;'";
         var public_input = $(input("publicId"+file.name));
-        msgPbc = msg.doc_private;
       }
 
       // tag.push('<li><input type="text"/></li>');
@@ -165,42 +164,55 @@ elFinder.prototype.commands.share= function() {
         .load(function() { dialog.find('.elfinder-cwd-icon').css('background', 'url("'+tmb+'") center center no-repeat'); })
         .attr('src', tmb);
     }
+
+    this.initSwitch();
   }
 
+  this.initSwitch = function(){
+    var elem = document.querySelector('.js-switch');
+    var init = new Switchery(elem, { color: '#1aa1cb', secondaryColor: '#cccccc' });
+  }
 }
 var newListTag = [],
 listTag = [],
 that,
-msgpub = "",
-msgpriv = "",
 new_tag = false,
 s = "",
+make_pub,
 value = "",
 init = false,
 dialogId,
 inputId;
 
 function hide(input){
+  // var input = document.querySelector('.js-check-click');
   if(input.checked){
     $("#tagId").show("slow");
-    $('#msgId').text(msgpub);
     if(listTag==0){
       disabled($($('#'+dialogId)[0].nextSibling.firstChild.firstChild));
     }
     autocomp();
   } else {
     $("#tagId").hide("slow");
-    $('#msgId').text(msgpriv);
     disabled($($('#'+dialogId)[0].nextSibling.firstChild.firstChild));
   }
   return false;
 }
 
 function disabled(button){
+  button.attr('title', make_pub);
+  var myTooltip = button.tooltip({
+    content: button.attr( "title" ),
+    items: 'button'
+    })
+  .off( "mouseover" )
+  .attr( "title", "" ).css({ cursor: "pointer" });
   if(document.getElementById(inputId).checked && (listTag.length == 0 || listTag == null)){
     button.attr('disabled', true);
+    myTooltip.tooltip( "open" );
   } else {
     button.attr('disabled', false);
+    myTooltip.tooltip( "close" );
   }
 }
 

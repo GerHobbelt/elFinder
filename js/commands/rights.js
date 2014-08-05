@@ -74,10 +74,10 @@ elFinder.prototype.commands.rights= function() {
       dialog = fm.getUI().find('#'+id),
       size, tmb, file, classFile, title, dcnt,
       input_checked = function(id){
-        return "<input type='checkbox' id='"+id+"' checked='checked'>"
+        return "<input type='checkbox' id='"+id+"' class='js-switch' checked='checked'>"
       },
       input = function(id){
-        return "<input type='checkbox' id='"+id+"'>"
+        return "<input type='checkbox' id='"+id+"' class='js-switch' >"
       },
 
       save = function() {
@@ -201,7 +201,14 @@ elFinder.prototype.commands.rights= function() {
         .load(function() { dialog.find('.elfinder-cwd-icon').css('background', 'url("'+tmb+'") center center no-repeat'); })
         .attr('src', tmb);
     }
+    this.initSwitch();
   }
 
+  this.initSwitch = function(){
+    var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
 
+    elems.forEach(function(html) {
+      var switchery = new Switchery(html,{ color: '#1aa1cb', secondaryColor: '#cccccc' });
+    });
+  }
 }

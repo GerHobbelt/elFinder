@@ -1614,7 +1614,7 @@ window.elFinder = function(node, opts) {
 		.bind('rm', function(e) {
 			var play  = beeper.canPlayType && beeper.canPlayType('audio/wav; codecs="1"');
 
-			play && play != '' && play != 'no' && $(beeper).html('<source src="./sounds/rm.wav" type="audio/wav">')[0].play()
+			play && play != '' && play != 'no' && $(beeper).html('<source src="./elFinder/sounds/rm.wav" type="audio/wav">')[0].play()
 		})
 
 		;
