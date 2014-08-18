@@ -8,6 +8,7 @@
 // if Jake fails to detect need libraries try running before: export NODE_PATH=`npm root`
 
 var fs = require('fs'),
+    fsext = require('fs-extra')
     path = require('path'),
     util = require('util'),
     ugjs = require('uglify-js'),
@@ -26,8 +27,7 @@ var dirmode = 0755,
                 path.join(src, 'js', 'elFinder.command.js'),
                 path.join(src, 'js', 'elFinder.resources.js'),
                 path.join(src, 'js', 'jquery.dialogelfinder.js'),
-                path.join(src, 'js', 'i18n', 'elfinder.en.js'),
-                path.join(src, 'js', 'i18n', 'elfinder.zh_CN.js')
+                path.join(src, 'js', 'i18n', 'elfinder.en.js')
             ]
             .concat(grep(path.join(src, 'js', 'ui'), '\\.js$'))
             .concat(grep(path.join(src, 'js', 'commands'), '\\.js$')),
@@ -232,7 +232,6 @@ desc('pack release')
 task({ 'release': [] }, function () {
     var prePack = jake.Task['prepack'];
     prePack.addListener('complete', function () {
-        console.log("=====================");
         var pack = jake.Task['package'];
         pack.addListener('complete', function () {
             console.log('Created package for elFinder ' + version);
@@ -244,7 +243,65 @@ task({ 'release': [] }, function () {
 }, { async: true });
 
 
-// other
+desc('build full package');
+task({ 'build' : ['elfinder'] }, function() {
+    var dir = ['css', 'js', 'images', path.join('js', 'i18n'), path.join('js', 'proxy'), 'php', 'files'];
+
+    !path.existsSync("build") && fs.mkdirSync("build", dirmode); //build folder
+
+    for (d in dir) {
+        var bd = path.join('build', dir[d]);
+        if (!path.existsSync(bd)) {
+            console.log('mkdir ' + bd);
+            fs.mkdirSync(bd, dirmode);
+        }
+    }
+
+    var copyMap = {
+        'css': {
+            dir: "css",
+            includes: ['jquery-ui.min.css', 'elfinder.min.css', 'elfinder.full.css', 'theme.css']
+        },
+        'js': {
+            dir: "js",
+            includes: ['elfinder.full.js', 'elfinder.min.js', 'i18n', 'libs', 'proxy']
+        },
+        'images': {
+            dir: "images",
+            includes: ['../images']
+        },
+        'php': {
+            dir: "php",
+            includes: ['../php'],
+            exclude:[]
+        },
+        'sounds': {
+            dir: "sounds",
+            includes: ['../sounds']
+        },
+        'index': {
+            dir: "./",
+            includes: ['elfinder.html']
+        }
+    };
+    var from, to, relativeDir, copyItem, copyList;
+
+    for (var folder in copyMap) {
+        copyItem = copyMap[folder];
+        copyList = copyItem.includes;
+        relativeDir = copyItem.dir;
+
+        for (var index = 0, len = copyList.length; index < len; index++) {
+            from = path.join(relativeDir, copyList[index]);
+            to = path.join("build", from);
+            console.log("copy %s", from);
+            fsext.copy(from, to);
+        }
+    }
+});
+
+
+// clean
 desc('clean build dir')
 task('clean', function () {
     console.log('cleaning the floor')
@@ -276,4 +333,22 @@ task('clean', function () {
             }
         }
     }
+    return;
+
+    //rmdir build
+    var exec = require('child_process').exec,
+        platform=require('os').platform(),
+        cmd="del /s /f /r"
+        child;
+        if(/linux/.exec(platform)){
+            cmd="rm -rf ./build";
+        }
+    child = exec('rm -rf ./build', function(err, out) {
+        if(err){
+            console.log("rmdir fail: "+err.message);
+            console.log(err.stack);
+            return;
+        }
+        console.log("folder build removed: \r\s%s",out);
+    });
 });

@@ -247,7 +247,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'maintainer'      : '维护',
 			'translator'      : '翻译',
 			'icons'           : '图标',
-			'dontforget'      : '别忘了带上你擦汗的毛巾',
+			'dontforget'      : 'and don\'t forget to take your towel', //翻译了之后,诙谐的味道就瞬间没了
 			'shortcutsof'     : '快捷键已禁用',
 			'dropFiles'       : '把文件拖到这里',
 			'or'              : '或者',
