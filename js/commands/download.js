@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder command "download". 
  * Download selected files.

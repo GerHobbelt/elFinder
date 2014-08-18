@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class  elFinder command "up"
  * Go into parent directory

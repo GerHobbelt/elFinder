@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder command "getfile". 
  * Return selected files info into outer callback.

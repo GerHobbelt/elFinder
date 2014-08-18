@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class  elFinder command "resize"
  * Open dialog to resize image

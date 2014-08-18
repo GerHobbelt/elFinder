@@ -24,7 +24,7 @@
 .elfinder-resize-handle-hline,
 .elfinder-resize-handle-vline {
 	position:absolute;
-	background-image:url("../img/crop.gif");
+	background-image:url("../images/crop.gif");
 }
 
 .elfinder-resize-handle-hline {
@@ -109,7 +109,7 @@
 	left:50%;
 	margin-left:-100px;
 	text-align:center;
-	background:url(../img/progress.gif) center bottom repeat-x;
+	background:url(../images/progress.gif) center bottom repeat-x;
 }
 
 .elfinder-resize-row { margin-bottom:7px; position:relative;}
@@ -191,7 +191,7 @@
 	height:96px;
 	float:left;
 	margin-right:1em;
-	background:url('../img/logo.png') center center no-repeat;
+	background:url('../images/logo.png') center center no-repeat;
 }
 
 .elfinder-help h3 { font-size:1.5em; margin:.2em 0 .3em 0; }

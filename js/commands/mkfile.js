@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class  elFinder command "mkfile"
  * Create new empty file

@@ -56,12 +56,12 @@
 	display:none;
 	top:50%;
 	margin-top:-8px;
-	background-image:url("../img/arrows-normal.png");
+	background-image:url("../images/arrows-normal.png");
 	background-repeat:no-repeat;
 /*	border:1px solid #111;*/
 }
 
-.ui-state-active .elfinder-navbar-arrow { background-image:url("../img/arrows-active.png"); }
+.ui-state-active .elfinder-navbar-arrow { background-image:url("../images/arrows-active.png"); }
 
 /* collapsed/expanded arrow view */
 .elfinder-navbar-collapsed .elfinder-navbar-arrow { display:block; }
@@ -80,7 +80,7 @@
 	position:absolute;
 	top:50%;
 	margin-top:-8px;
-	background-image:url("../img/toolbar.png");
+	background-image:url("../images/toolbar.png");
 	background-repeat:no-repeat;
 	background-position:0 -16px;
 }
@@ -114,7 +114,7 @@
 	display:block;
 	top:50%;
 	margin-top:-7px;
-	background: url("../img/spinner-mini.gif") center center no-repeat;
+	background: url("../images/spinner-mini.gif") center center no-repeat;
 }
 /* spinner ltr/rtl enviroment */
 .elfinder-ltr .elfinder-navbar-spinner { left:0;  margin-left:-2px; }
@@ -130,7 +130,7 @@
 .elfinder-rtl .elfinder-navbar .elfinder-symlink { right: 8px; }
 
 /* resizable */
-.elfinder-navbar .ui-resizable-handle { width:12px; background:transparent url('../img/resize.png') center center no-repeat; left:0; }
+.elfinder-navbar .ui-resizable-handle { width:12px; background:transparent url('../images/resize.png') center center no-repeat; left:0; }
 .elfinder-nav-handle-icon {
 	position:absolute;
 	top:50%;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder command "duplicate"
  * Create file/folder copy with suffix "copy Number"

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder ui
  * Display number of files/selected files and its size in statusbar

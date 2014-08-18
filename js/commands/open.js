@@ -1,4 +1,3 @@
-"use strict"
 /**
  * @class  elFinder command "open"
  * Enter folder or open files in new windows

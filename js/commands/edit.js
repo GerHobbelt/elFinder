@@ -1,4 +1,3 @@
-"use strict"
 /**
  * @class elFinder command "edit". 
  * Edit text file in dialog window

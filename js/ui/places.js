@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder places/favorites ui
  *

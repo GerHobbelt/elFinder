@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder command "copy".
  * Put files in filemanager clipboard.

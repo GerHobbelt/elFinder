@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class  elFinder command "paste"
  * Paste filesfrom clipboard into directory.

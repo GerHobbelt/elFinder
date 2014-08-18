@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class  elFinder toolbar's button tor upload file
  *

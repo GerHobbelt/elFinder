@@ -1,4 +1,3 @@
-"use strict";
 /**
  * elFinder current working directory ui.
  *

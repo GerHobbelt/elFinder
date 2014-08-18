@@ -51,7 +51,7 @@
 .elfinder-contextmenu-arrow {
 	width:16px;
 	height:16px;
-	background:url('../img/arrows-normal.png') 5px 4px no-repeat;
+	background:url('../images/arrows-normal.png') 5px 4px no-repeat;
 }
 
 /* arrow icon in rtl/ltr enviroment */

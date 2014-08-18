@@ -1,4 +1,3 @@
-"use strict"
 /**
  * @class  elFinder command "quicklook"
  * Fast preview for some files types

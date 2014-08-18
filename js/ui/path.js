@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder ui
  * Display current folder path in statusbar.

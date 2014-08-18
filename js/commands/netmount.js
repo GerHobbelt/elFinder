@@ -1,4 +1,3 @@
-"use strict"
 /**
  * @class  elFinder command "netmount"
  * Mount network volume with user credentials.

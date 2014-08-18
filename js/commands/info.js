@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @class elFinder command "info". 
  * Display dialog with file properties.
