@@ -7,6 +7,7 @@
 
 /* dialogs */
 .std42-dialog { padding: 0;}
+.std42-dialog .ui-widget-content { padding-left: 55px; }
 .std42-dialog, .std42-dialog .ui-widget-content { background-color:#ededed; background-image:none; }
 
 /* navbar */
@@ -45,7 +46,8 @@
 .elfinder-contextmenu .ui-state-hover .elfinder-contextmenu-arrow { background-image:url('../images/arrows-active.png'); }
 
 
-
-
+/* mod */
+body{ min-width:945px; min-height:250px; }
+#about{ height: 175px; overflow-y: auto;}
 
 
