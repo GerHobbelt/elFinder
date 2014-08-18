@@ -333,22 +333,28 @@ task('clean', function () {
             }
         }
     }
-    return;
 
     //rmdir build
     var exec = require('child_process').exec,
-        platform=require('os').platform(),
-        cmd="del /s /f /r"
+        platform = require('os').platform(),
+        cmd = "rd /s /q .\\build",
         child;
-        if(/linux/.exec(platform)){
-            cmd="rm -rf ./build";
-        }
-    child = exec('rm -rf ./build', function(err, out) {
-        if(err){
-            console.log("rmdir fail: "+err.message);
+
+    if (!path.existsSync('build')) {
+        console.log("clean program finished");
+        return;
+    }
+
+    if (/linux/.exec(platform)) {
+        cmd = "rm -rf ./build";
+    }
+    
+    child = exec(cmd, function(err, out) {
+        if (err) {
+            console.log("rmdir fail: " + err.message);
             console.log(err.stack);
             return;
         }
-        console.log("folder build removed: \r\s%s",out);
+        console.log("folder build removed");
     });
 });
