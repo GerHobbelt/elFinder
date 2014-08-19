@@ -204,9 +204,9 @@ task('misc', function () {
     }
 
     // connector
-    var cs = path.join(src, 'php', 'connector.minimal.php');
-    var cd = path.join('php', 'connector.php');
-    copyFile(cs, cd);
+    // var cs = path.join(src, 'php', 'connector.minimal.php');
+    // var cd = path.join('php', 'connector.php');
+    // copyFile(cs, cd);
 });
 
 desc('build elFinder')
