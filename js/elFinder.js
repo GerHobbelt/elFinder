@@ -350,13 +350,21 @@ window.elFinder = function(node, opts) {
 	 * @type Object
 	 **/
 	this.options = $.extend(true, {}, this._options, opts||{});
-	
+	this.options.excepted = {}; //except commands 
+
 	if (opts.ui) {
 		this.options.ui = opts.ui;
 	}
 	
 	if (opts.commands) {
 		this.options.commands = opts.commands;
+	}else if(opts.disabled){
+        var cmds = this.options.commands,
+            idx = -1;
+        $.each(opts.disabled, function(i, cmd) {
+            self.options.excepted[cmd] = true;
+            (idx = $.inArray(cmd, cmds)) !== -1 && cmds.splice(idx, 1);
+        });
 	}
 	
 	if (opts.uiOptions && opts.uiOptions.toolbar) {
@@ -1636,7 +1644,8 @@ window.elFinder = function(node, opts) {
 	}
 	// check required commands
 	$.each(['open', 'reload', 'back', 'forward', 'up', 'home', 'info', 'quicklook', 'getfile', 'help'], function(i, cmd) {
-		$.inArray(cmd, self.options.commands) === -1 && self.options.commands.push(cmd);
+        if (self.options.excepted[cmd]) return true; //except commands
+        $.inArray(cmd, self.options.commands) === -1 && self.options.commands.push(cmd);
 	});
 
 	// load commands
