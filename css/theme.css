@@ -47,7 +47,7 @@
 
 
 /* mod */
-body{ min-width:945px; min-height:250px; }
+body{ min-width:750px; min-height:250px; }
 #about{ height: 175px; overflow-y: auto; }
 .elfinder-cwd table tr.ui-state-hover { border-left: 0; border-right: 0; }
 .elfinder-cwd div.ui-state-hover { border: 0; }

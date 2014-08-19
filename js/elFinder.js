@@ -1392,6 +1392,31 @@ window.elFinder = function(node, opts) {
 		node.css('width', w).height(h).trigger('resize');
 		this.trigger('resize', {width : node.width(), height : node.height()});
 	}
+
+    /**
+     * Auto resize elfinder node
+     */
+    this.autoresize = function() {
+        var ui = self.ui,
+            timer = -1,
+            minHeight = Math.ceil(parseInt($(document.body).css("min-height")) || 0),
+            offsetTop = Math.ceil($(document.body).offset().top || 0),
+            tbheight = ui.toolbar.height() + (parseInt(ui.toolbar.css("padding-top")) || 0) * 2,
+            sbheight = Math.ceil(ui.statusbar.height()) + Math.ceil((parseFloat(ui.statusbar.css("padding-top") || 0) * 2));
+
+        $(window).on('resize', function() {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                var winheight = $(this).height();
+                if (winheight < minHeight) winheight = minHeight;
+                var h = winheight - offsetTop * 2 - 5;
+                var innerHeignt = h - tbheight - sbheight;
+                node.height(h);
+                ui.workzone.height(innerHeignt);
+                ui.navbar.height(innerHeignt);
+            }, 150);
+        });
+    }
 	
 	/**
 	 * Restore elfinder node size
@@ -1670,6 +1695,7 @@ window.elFinder = function(node, opts) {
 	 * @type Object
 	 **/
 	this.ui = {
+		node : node,
 		// container for nav panel and current folder container
 		workzone : $('<div/>').appendTo(node).elfinderworkzone(this),
 		// container for folders tree / places
@@ -1729,6 +1755,7 @@ window.elFinder = function(node, opts) {
 	
 	// update size	
 	self.resize(width, height);
+	self.autoresize();
 	
 	// attach events to document
 	$(document)
