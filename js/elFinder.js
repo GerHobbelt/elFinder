@@ -1409,7 +1409,7 @@ window.elFinder = function(node, opts) {
             timer = setTimeout(function() {
                 var winheight = $(this).height();
                 if (winheight < minHeight) winheight = minHeight;
-                var h = winheight - offsetTop * 2 - 5;
+                var h = winheight - offsetTop * 2 - 3;
                 var innerHeignt = h - tbheight - sbheight;
                 node.height(h);
                 ui.workzone.height(innerHeignt);
