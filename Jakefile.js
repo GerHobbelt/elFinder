@@ -8,7 +8,8 @@
 // if Jake fails to detect need libraries try running before: export NODE_PATH=`npm root`
 
 var fs = require('fs'),
-    fsext = require('fs-extra')
+    os = require('os'),
+    fsext = require('fs-extra'),
     path = require('path'),
     util = require('util'),
     ugjs = require('uglify-js'),
@@ -17,6 +18,7 @@ var fs = require('fs'),
 var dirmode = 0755,
     src = __dirname,
     version = getVersion(),
+    platform = os.platform();
     files = {
         'elfinder.full.js': [
                 path.join(src, 'js', 'elFinder.js'),
@@ -294,7 +296,21 @@ task({ 'build' : ['elfinder'] }, function() {
         for (var index = 0, len = copyList.length; index < len; index++) {
             from = path.join(relativeDir, copyList[index]);
             to = path.join("build", from);
-            console.log("copy %s", from);
+            console.log("\tcopy %s", from);
+            fsext.copy(from, to);
+        }
+    }
+
+    if (/win32/.exec(platform)) {
+        //dev
+        console.log("\ndev environment, copy some file/folder to files for test.")
+        var folders = ['images', 'js', 'sounds', 'php'],
+            f;
+        while (folders.length > 0) {
+            f = folders.shift();
+            from = path.join("./", f);
+            to = path.join('./build/files', from);
+            console.log("\tcopy %s-->%s", from, to);
             fsext.copy(from, to);
         }
     }
@@ -336,7 +352,6 @@ task('clean', function () {
 
     //rmdir build
     var exec = require('child_process').exec,
-        platform = require('os').platform(),
         cmd = "rd /s /q .\\build",
         child;
 

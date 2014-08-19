@@ -75,12 +75,24 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'errArcSymlinks'       : '出于安全上的考虑，不允许解压包含符号链接的压缩包.',
 			'errArcMaxSize'        : '压缩包文件超过最大允许文件大小范围.',
 			'errResize'            : '无法重新调整大小 "$1".',
+			'errResizeDegree'      : '错误的旋转参数.',  // added 7.3.2013
+			'errResizeRotate'      : '图片未旋转.',  // added 7.3.2013
+			'errResizeSize'        : '图片大小参数错误.',  // added 7.3.2013
+			'errResizeNoChange'    : '图片未修改.',  // added 7.3.2013
 			'errUsupportType'      : '不被支持的文件格式.',
 			'errNotUTF8Content'    : '文件 "$1" 不是 UTF-8 格式, 不能编辑.',  // added 9.11.2011
 			'errNetMount'          : '无法装载 "$1".', // added 17.04.2012
 			'errNetMountNoDriver'  : '不支持该协议.',     // added 17.04.2012
 			'errNetMountFailed'    : '装载失败.',         // added 17.04.2012
 			'errNetMountHostReq'   : '需要指定主机.', // added 18.04.2012
+			'errSessionExpires'    : '由于长时间未操作,会话已超时.',
+			'errCreatingTempDir'   : '无法创建临时目录: "$1"',
+			'errFtpDownloadFile'   : '无法从FTP下载文件: "$1"',
+			'errFtpUploadFile'     : '无法上传文件到FTP: "$1"',
+			'errFtpMkdir'          : '无法在FTP中创建远程目录: "$1"',
+			'errArchiveExec'       : '压缩文件失败: "$1"',
+			'errExtractExec'       : '解压文件失败: "$1"',
+
 			/******************************* commands names ********************************/
 			'cmdarchive'   : '创建压缩包',
 			'cmdback'      : '后退',
@@ -141,6 +153,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'ntfsmth'     : '正在忙 >_<',
 			'ntfloadimg'  : '正在加载图片',
       		'ntfnetmount' : '正在装载网络卷', // added 18.04.2012
+			'ntfdim'      : '读取图片尺寸', // added 20.05.2013
 			
 			/************************************ dates **********************************/
 			'dateUnknown' : '未知',
@@ -162,7 +175,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'February'    : '二月',
 			'March'       : '三月',
 			'April'       : '四月',
-			'May'         : '五月',
+			//'May'         : '五月', //strict mode, line 153
 			'June'        : '六月',
 			'July'        : '七月',
 			'August'      : '八月',
@@ -193,6 +206,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'sortkind'          : '按类型', 
 			'sortsize'          : '按大小',
 			'sortdate'          : '按日期',
+			'sortFoldersFirst'  : '文件夹优先',
 
 			/********************************** messages **********************************/
 			'confirmReq'      : '请确认',
@@ -268,6 +282,9 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'rotate-cw'       : '顺时针旋转90度',
 			'rotate-ccw'      : '逆时针旋转90度',
 			'degree'          : '度',
+			'netMountDialogTitle' : '映射网络驱动器', // added 18.04.2012
+			'protocol'            : '协议', // added 18.04.2012
+			'host'                : '域名', // added 18.04.2012
 			'port'            : '端口', // added 18.04.2012
 			'user'            : '用户', // added 18.04.2012
 			'pass'            : '密码', // added 18.04.2012
