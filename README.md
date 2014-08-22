@@ -1,14 +1,27 @@
 Modify
 ======
-### add node modules
-    npm install
-    
-### add jake commond (build full package)
-    jake build
+ * add node modules (package.json)
+ * add jake commond (build full package)
+ * fullfill content
 
-### fullfill content
+How To
+======
+install jake
+````
+npm install -g jake
+````
 
-Other
+install depencies
+````
+npm install
+````
+
+build package
+````
+jake build
+````
+
+Tips
 ===== 
 on Windows platform, `jake build` will copy some files/folders to folder `build/files` for test.
 
