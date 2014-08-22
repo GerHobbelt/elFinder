@@ -1404,16 +1404,26 @@ window.elFinder = function(node, opts) {
             tbheight = ui.toolbar.height() + (parseInt(ui.toolbar.css("padding-top")) || 0) * 2,
             sbheight = Math.ceil(ui.statusbar.height()) + Math.ceil((parseFloat(ui.statusbar.css("padding-top") || 0) * 2));
 
+        self.ui.body = $(document.body);
+        self.ui.filezone = ui.workzone.find(".elfinder-cwd-wrapper"); //file list zone
+
         $(window).on('resize', function() {
             clearTimeout(timer);
             timer = setTimeout(function() {
                 var winheight = $(this).height();
-                if (winheight < minHeight) winheight = minHeight;
+                if (winheight < minHeight) {
+                    winheight = minHeight;
+                    ui.body.css({ "overflow-y": "auto" });
+                } else {
+                    ui.body.css({ "overflow-y": "hidden" });
+                }
                 var h = winheight - offsetTop * 2 - 3;
-                var innerHeignt = h - tbheight - sbheight;
+                var innerHeight = h - tbheight - sbheight;
                 node.height(h);
-                ui.workzone.height(innerHeignt);
-                ui.navbar.height(innerHeignt);
+                ui.workzone.height(innerHeight);
+                ui.filezone.height(innerHeight);
+                ui.cwd.height(innerHeight);
+                ui.navbar.height(innerHeight);
             }, 150);
         });
     }

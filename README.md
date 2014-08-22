@@ -1,14 +1,27 @@
 Modify
 ======
-## add node modules
+### add node modules
     npm install
     
-## add jake commond
+### add jake commond (build full package)
     jake build
 
+### fullfill content
+
+Other
+===== 
 on Windows platform, `jake build` will copy some files/folders to folder `build/files` for test.
 
-============================================================
+<pre>
+
+
+
+
+
+
+
+</pre>
+
 
 elFinder
 ========

@@ -29,7 +29,8 @@ var dirmode = 0755,
                 path.join(src, 'js', 'elFinder.command.js'),
                 path.join(src, 'js', 'elFinder.resources.js'),
                 path.join(src, 'js', 'jquery.dialogelfinder.js'),
-                path.join(src, 'js', 'i18n', 'elfinder.en.js')
+                path.join(src, 'js', 'i18n', 'elfinder.en.js'),
+                path.join(src, 'js', 'i18n', 'elfinder.zh_CN.js')
             ]
             .concat(grep(path.join(src, 'js', 'ui'), '\\.js$'))
             .concat(grep(path.join(src, 'js', 'commands'), '\\.js$')),
@@ -49,7 +50,7 @@ var dirmode = 0755,
 
         'misc': [
                 path.join(src, 'js', 'proxy', 'elFinderSupportVer1.js'),
-                path.join(src, 'elfinder.html')
+                path.join(src, 'index.html')
             ]
     };
 
@@ -329,7 +330,7 @@ task('clean', function () {
             .concat(grep(path.join('js', 'i18n')))
             .concat(path.join('css', 'theme.css'))
             .concat(grep('php'))
-            .concat([path.join('js', 'proxy', 'elFinderSupportVer1.js'), 'Changelog', 'README.md', 'elfinder.html', path.join('files', 'readme.txt')]);
+            .concat([path.join('js', 'proxy', 'elFinderSupportVer1.js'), 'Changelog', 'README.md',  path.join('files', 'readme.txt')]);
     }
     for (f in uf) {
         var file = uf[f];
