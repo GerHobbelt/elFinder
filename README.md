@@ -12,16 +12,8 @@ Other
 ===== 
 on Windows platform, `jake build` will copy some files/folders to folder `build/files` for test.
 
-<pre>
 
-
-
-
-
-
-
-</pre>
-
+------------------------------------
 
 elFinder
 ========
