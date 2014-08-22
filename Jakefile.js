@@ -283,7 +283,7 @@ task({ 'build' : ['elfinder'] }, function() {
         },
         'index': {
             dir: "./",
-            includes: ['elfinder.html']
+            includes: ['index.html']
         }
     };
     var from, to, relativeDir, copyItem, copyList;
