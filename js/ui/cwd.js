@@ -210,7 +210,6 @@ $.fn.elfindercwd = function(fm, options) {
 					sel      = cwd.find('[id].'+clSelected),
 					selector = prev ? 'first:' : 'last',
 					s, n, sib, top, left;
-
 				function sibling(n, direction) {
 					return n[direction+'All']('[id]:not(.'+clDisabled+'):not(.elfinder-cwd-parent):first');
 				}
@@ -476,7 +475,6 @@ $.fn.elfindercwd = function(fm, options) {
 				
 				$.each(images, function(hash, tmb) {
 					var node = cwd.find('#'+hash);
-
 					if (node.length) {
 
 						(function(node, tmb) {
@@ -949,7 +947,6 @@ $.fn.elfindercwd = function(fm, options) {
 			.bind('viewchange', function() {
 				var sel = fm.selected(),
 					l   = fm.storage('view') == 'list';
-				
 				if (l != list) {
 					list = l;
 					content(fm.files());
