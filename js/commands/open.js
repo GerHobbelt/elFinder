@@ -98,6 +98,11 @@ elFinder.prototype.commands.open = function() {
 			    }
 			}
 
+			if (file.mime == "text/pad"){
+				fm.exec('edit', [file.hash]);
+				return false;
+			}
+
 			// set window size for image if set
 			if (file.dim) {
 				s = file.dim.split('x');
@@ -116,7 +121,7 @@ elFinder.prototype.commands.open = function() {
 			form.method = 'POST';
 			form.target = 'new_window';
 			form.style.display = 'none';
-			if (file.mime != 'text/quiz' && file.mime != 'text/url'){
+			if (file.mime != 'text/pad' && file.mime != 'text/quiz' && file.mime != 'text/url'){
 				var params = $.extend({}, fm.options.customData, {
 					cmd: 'file',
 					target: file.hash
@@ -130,7 +135,7 @@ elFinder.prototype.commands.open = function() {
 				});
 			}
 			document.body.appendChild(form);
-			fm.options.url =virtual_path + '/api/connector';
+			fm.options.url =virtual_path + '/api/connector';				
 			form.submit();
 		}
 		return dfrd.resolve(hashes);

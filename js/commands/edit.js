@@ -179,7 +179,7 @@ elFinder.prototype.commands.edit = function() {
 							});
 						})
 				} else {
-					window.open(data.url, 'etherpad', '_blank');
+					window.open(data.url, '_blank');
 				}
 			})
 			.fail(function(error) {
