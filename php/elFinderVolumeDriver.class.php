@@ -880,8 +880,8 @@ abstract class elFinderVolumeDriver {
 			'archivers'     => array(
 				// 'create'  => array_keys($this->archivers['create']),
 				// 'extract' => array_keys($this->archivers['extract']),
-				'create'  => is_array($this->archivers['create'])  ? array_keys($this->archivers['create'])  : array(),
-				'extract' => is_array($this->archivers['extract']) ? array_keys($this->archivers['extract']) : array()
+				'create'  => isset($this->archivers['create']) && is_array($this->archivers['create'])  ? array_keys($this->archivers['create'])  : array(),
+				'extract' => isset($this->archivers['extract']) && is_array($this->archivers['extract']) ? array_keys($this->archivers['extract']) : array()
 			)
 		);
 	}
@@ -1758,7 +1758,9 @@ abstract class elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	public function search($q, $mimes) {
-		return $this->doSearch($this->root, $q, $mimes);
+		return $this->commandDisabled('search')
+			? array()
+			: $this->doSearch($this->root, $q, $mimes);
 	}
 	
 	/**

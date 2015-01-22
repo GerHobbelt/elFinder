@@ -60,16 +60,6 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 		$this->aroot = realpath($this->root);
 		$root = $this->stat($this->root);
 		
-		if ($this->options['quarantine']) {
-			$this->attributes[] = array(
-				'pattern' => '~^'.preg_quote(DIRECTORY_SEPARATOR.$this->options['quarantine']).'$~',
-				'read'    => false,
-				'write'   => false,
-				'locked'  => true,
-				'hidden'  => true
-			);
-		}
-		
 		// chek thumbnails path
 		if ($this->options['tmbPath']) {
 			$this->options['tmbPath'] = strpos($this->options['tmbPath'], DIRECTORY_SEPARATOR) === false
@@ -92,17 +82,35 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 		}
 
 		// check quarantine dir
+		$this->quarantine = '';
 		if (!empty($this->options['quarantine'])) {
-			$this->quarantine = $this->root.DIRECTORY_SEPARATOR.$this->options['quarantine'];
-			if ((!is_dir($this->quarantine) && !$this->_mkdir($this->root, $this->options['quarantine'])) || !is_writable($this->quarantine)) {
-				$this->archivers['extract'] = array();
-				$this->disabled[] = 'extract';
+			if (is_dir($this->options['quarantine'])) {
+				if (is_writable($this->options['quarantine'])) {
+					$this->quarantine = $this->options['quarantine'];
+				}
+				$this->options['quarantine'] = '';
+			} else {
+				$this->quarantine = $this->root.DIRECTORY_SEPARATOR.$this->options['quarantine'];
+				if ((!is_dir($this->quarantine) && !$this->_mkdir($this->root, $this->options['quarantine'])) || !is_writable($this->quarantine)) {
+					$this->options['quarantine'] = $this->quarantine = '';
+				}
 			}
-		} else {
+		}
+		
+		if (!$this->quarantine) {
 			$this->archivers['extract'] = array();
 			$this->disabled[] = 'extract';
 		}
 		
+		if ($this->options['quarantine']) {
+			$this->attributes[] = array(
+					'pattern' => '~^'.preg_quote(DIRECTORY_SEPARATOR.$this->options['quarantine']).'$~',
+					'read'    => false,
+					'write'   => false,
+					'locked'  => true,
+					'hidden'  => true
+			);
+		}
 	}
 	
 	/*********************************************************************/
@@ -538,14 +546,10 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	protected function _save($fp, $dir, $name, $stat) {
 		$path = $dir.DIRECTORY_SEPARATOR.$name;
 
-		if (!($target = @fopen($path, 'wb'))) {
+		if (@file_put_contents($path, $fp, LOCK_EX) === false) {
 			return false;
 		}
 
-		while (!feof($fp)) {
-			fwrite($target, fread($fp, 8192));
-		}
-		fclose($target);
 		@chmod($path, $this->options['fileMode']);
 		clearstatcache();
 		return $path;

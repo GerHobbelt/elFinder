@@ -57,6 +57,11 @@ $.fn.elfinderplaces = function(fm, opts) {
 			 * @return void
 			 **/
 			add = function(dir) {
+				if (!fm.files().hasOwnProperty(dir.hash)) {
+					// update cache
+					fm.trigger('tree', {tree: [dir]});
+				}
+				
 				var node = create(dir);
 
 				if (subtree.children().length) {
@@ -219,7 +224,7 @@ $.fn.elfinderplaces = function(fm, opts) {
 			
 			places.show().parent().show();
 
-			dirs = $.map(fm.storage('places').split(','), function(hash) { return hash || null});
+			dirs = $.map((fm.storage('places') || '').split(','), function(hash) { return hash || null;});
 			
 			if (dirs.length) {
 				root.prepend(spinner);
