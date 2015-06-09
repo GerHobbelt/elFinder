@@ -51,6 +51,24 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	/*********************************************************************/
 	
 	/**
+	 * Prepare driver before mount volume.
+	 * Return true if volume is ready.
+	 *
+	 * @return bool
+	 **/
+	protected function init() {
+		// Normalize directory separator for windows
+		if (DIRECTORY_SEPARATOR !== '/') {
+			foreach(array('path', 'tmbPath', 'quarantine') as $key) {
+				if ($this->options[$key]) {
+					$this->options[$key] = str_replace('/', DIRECTORY_SEPARATOR, $this->options[$key]);
+				}
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * Configure after successfull mount.
 	 *
 	 * @return void
@@ -64,7 +82,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 		if ($this->options['tmbPath']) {
 			$this->options['tmbPath'] = strpos($this->options['tmbPath'], DIRECTORY_SEPARATOR) === false
 				// tmb path set as dirname under root dir
-				? $this->root.DIRECTORY_SEPARATOR.$this->options['tmbPath']
+				? $this->_abspath($this->options['tmbPath'])
 				// tmb path as full path
 				: $this->_normpath($this->options['tmbPath']);
 		}
@@ -90,7 +108,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 				}
 				$this->options['quarantine'] = '';
 			} else {
-				$this->quarantine = $this->root.DIRECTORY_SEPARATOR.$this->options['quarantine'];
+				$this->quarantine = $this->_abspath($this->options['quarantine']);
 				if ((!is_dir($this->quarantine) && !$this->_mkdir($this->root, $this->options['quarantine'])) || !is_writable($this->quarantine)) {
 					$this->options['quarantine'] = $this->quarantine = '';
 				}
@@ -150,7 +168,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _joinPath($dir, $name) {
-		return $dir.DIRECTORY_SEPARATOR.$name;
+		return rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name;
 	}
 	
 	/**
@@ -163,6 +181,11 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	protected function _normpath($path) {
 		if (empty($path)) {
 			return '.';
+		}
+		
+		$changeSep = (DIRECTORY_SEPARATOR !== '/');
+		if ($changeSep) {
+			$path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
 		}
 
 		if (strpos($path, '/') === 0) {
@@ -200,6 +223,10 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 			$path = str_repeat('/', $initial_slashes) . $path;
 		}
 		
+		if ($changeSep) {
+			$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+		}
+		
 		return $path ? $path : '.';
 	}
 	
@@ -211,7 +238,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _relpath($path) {
-		return $path == $this->root ? '' : substr($path, strlen($this->root)+1);
+		return $path == $this->root ? '' : substr($path, strlen(rtrim($this->root, DIRECTORY_SEPARATOR)) + 1);
 	}
 	
 	/**
@@ -222,7 +249,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _abspath($path) {
-		return $path == DIRECTORY_SEPARATOR ? $this->root : $this->root.DIRECTORY_SEPARATOR.$path;
+		return $path == DIRECTORY_SEPARATOR ? $this->root : $this->_joinPath($this->root, $path);
 	}
 	
 	/**
@@ -248,7 +275,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 		$real_path = realpath($path);
 		$real_parent = realpath($parent);
 		if ($real_path && $real_parent) {
-			return $real_path === $real_parent || strpos($real_path, $real_parent.DIRECTORY_SEPARATOR) === 0;
+			return $real_path === $real_parent || strpos($real_path, rtrim($real_parent, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR) === 0;
 		}
 		return false;
 	}
@@ -379,12 +406,12 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 		}
 		
 		if (substr($target, 0, 1) != DIRECTORY_SEPARATOR) {
-			$target = dirname($path).DIRECTORY_SEPARATOR.$target;
+			$target = $this->_joinPath(dirname($path), $target);
 		}
 		
 		if ($this->_inpath($target, $this->aroot)) {
 			$atarget = realpath($target);
-			return $this->_normpath($this->root.DIRECTORY_SEPARATOR.substr($atarget, strlen($this->aroot)+1));
+			return $this->_normpath($this->_joinPath($this->root, substr($atarget, strlen(rtrim($this->aroot, DIRECTORY_SEPARATOR)) + 1)));
 		}
 
 		return false;
@@ -402,7 +429,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 		
 		foreach (scandir($path) as $name) {
 			if ($name != '.' && $name != '..') {
-				$files[] = $path.DIRECTORY_SEPARATOR.$name;
+				$files[] = $this->_joinPath($path, $name);
 			}
 		}
 		return $files;
@@ -442,7 +469,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _mkdir($path, $name) {
-		$path = $path.DIRECTORY_SEPARATOR.$name;
+		$path = $this->_joinPath($path, $name);
 
 		if (@mkdir($path)) {
 			@chmod($path, $this->options['dirMode']);
@@ -461,7 +488,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _mkfile($path, $name) {
-		$path = $path.DIRECTORY_SEPARATOR.$name;
+		$path = $this->_joinPath($path, $name);
 		
 		if (($fp = @fopen($path, 'w'))) {
 			@fclose($fp);
@@ -481,7 +508,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _symlink($source, $targetDir, $name) {
-		return @symlink($source, $targetDir.DIRECTORY_SEPARATOR.$name);
+		return @symlink($source, $this->_joinPath($targetDir, $name));
 	}
 	
 	/**
@@ -494,7 +521,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _copy($source, $targetDir, $name) {
-		return copy($source, $targetDir.DIRECTORY_SEPARATOR.$name);
+		return copy($source, $this->_joinPath($targetDir, $name));
 	}
 	
 	/**
@@ -508,7 +535,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _move($source, $targetDir, $name) {
-		$target = $targetDir.DIRECTORY_SEPARATOR.$name;
+		$target = $this->_joinPath($targetDir, $name);
 		return @rename($source, $target) ? $target : false;
 	}
 		
@@ -546,7 +573,7 @@ class elFinderVolumeLocalFileSystem extends elFinderVolumeDriver {
 	 * @author Dmitry (dio) Levashov
 	 **/
 	protected function _save($fp, $dir, $name, $stat) {
-		$path = $dir.DIRECTORY_SEPARATOR.$name;
+		$path = $this->_joinPath($dir, $name);
 
 		if (@file_put_contents($path, $fp, LOCK_EX) === false) {
 			return false;

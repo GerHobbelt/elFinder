@@ -721,6 +721,11 @@ abstract class elFinderVolumeDriver {
 		}
 
 		$this->rootName = empty($this->options['alias']) ? $this->_basename($this->root) : $this->options['alias'];
+
+		// This get's triggered if $this->root == '/' and alias is empty.
+		// Maybe modify _basename instead?
+		if ($this->rootName === '') $this->rootName = $this->separator;
+
 		$root = $this->stat($this->root);
 		
 		if (!$root) {
@@ -1367,26 +1372,11 @@ abstract class elFinderVolumeDriver {
 		}
 		
 		$mime = $this->mimetype($this->mimeDetect == 'internal' ? $name : $tmpname, $name); 
-		if ($mime == 'unknown' && $this->mimeDetect == 'internal') {
+		if ($mime == 'unknown' && $this->mimeDetect != 'internal') {
 			$mime = elFinderVolumeDriver::mimetypeInternalDetect($name);
 		}
 
-		// logic based on http://httpd.apache.org/docs/2.2/mod/mod_authz_host.html#order
-		$allow  = $this->mimeAccepted($mime, $this->uploadAllow, null);
-		$deny   = $this->mimeAccepted($mime, $this->uploadDeny,  null);
-		$upload = true; // default to allow
-		if (strtolower($this->uploadOrder[0]) == 'allow') { // array('allow', 'deny'), default is to 'deny'
-			$upload = false; // default is deny
-			if (!$deny && ($allow === true)) { // match only allow
-				$upload = true;
-			}// else (both match | no match | match only deny) { deny }
-		} else { // array('deny', 'allow'), default is to 'allow' - this is the default rule
-			$upload = true; // default is allow
-			if (($deny === true) && !$allow) { // match only deny
-				$upload = false;
-			} // else (both match | no match | match only allow) { allow }
-		}
-		if (!$upload) {
+		if (!$this->allowPutMime($mime)) {
 			return $this->setError(elFinder::ERROR_UPLOAD_FILE_MIME);
 		}
 
@@ -1581,6 +1571,26 @@ abstract class elFinderVolumeDriver {
 		if (!$file['write']) {
 			return $this->setError(elFinder::ERROR_PERM_DENIED);
 		}
+		
+		// check MIME
+		$name = $this->_basename($path);
+		$mime = '';
+		if ($this->mimeDetect != 'internal') {
+			if ($tp = tmpfile()) {
+				fwrite($tp, $content);
+				$info = stream_get_meta_data($tp);
+				$filepath = $info['uri'];
+				$mime = $this->mimetype($filepath, $name);
+				fclose($tp);
+			}
+		}
+		if (!$mime) {
+			$mime = $this->mimetype($name);
+		}
+		if (!$this->allowPutMime($mime)) {
+			return $this->setError(elFinder::ERROR_UPLOAD_FILE_MIME);
+		}
+		
 		$this->clearcache();
 		return $this->_filePutContents($path, $content) ? $this->stat($path) : false;
 	}
@@ -2013,6 +2023,31 @@ abstract class elFinderVolumeDriver {
 	}
 	
 	/**
+	 * Return true if file MIME type can save with check uploadOrder config.
+	 * 
+	 * @param string $mime
+	 * @return boolean
+	 */
+	protected function allowPutMime($mime) {
+		// logic based on http://httpd.apache.org/docs/2.2/mod/mod_authz_host.html#order
+		$allow  = $this->mimeAccepted($mime, $this->uploadAllow, null);
+		$deny   = $this->mimeAccepted($mime, $this->uploadDeny,  null);
+		$res = true; // default to allow
+		if (strtolower($this->uploadOrder[0]) == 'allow') { // array('allow', 'deny'), default is to 'deny'
+			$res = false; // default is deny
+			if (!$deny && ($allow === true)) { // match only allow
+				$res = true;
+			}// else (both match | no match | match only deny) { deny }
+		} else { // array('deny', 'allow'), default is to 'allow' - this is the default rule
+			$res = true; // default is allow
+			if (($deny === true) && !$allow) { // match only deny
+				$res = false;
+			} // else (both match | no match | match only allow) { allow }
+		}
+		return $res;
+	}
+	
+	/**
 	 * Return fileinfo 
 	 *
 	 * @param  string  $path  file cache
@@ -2186,7 +2221,7 @@ abstract class elFinderVolumeDriver {
 					if (isset(elFinderVolumeDriver::$mimetypes[$ext])) $type = elFinderVolumeDriver::$mimetypes[$ext];
 				}
 			}
-		} elseif ($type == 'mime_content_type') {
+		} elseif ($this->mimeDetect == 'mime_content_type') {
 			$type = mime_content_type($path);
 		} else {
 			$type = elFinderVolumeDriver::mimetypeInternalDetect($path);
@@ -2542,6 +2577,13 @@ abstract class elFinderVolumeDriver {
 				return $this->setError(elFinder::ERROR_COPY, $errpath);
 			}
 			$volume->close($fp, $src);
+			
+			// MIME check
+			$stat = $this->stat($path);
+			if (!$this->allowPutMime($stat['mime'])) {
+				$this->remove($path, true);
+				return $this->setError(elFinder::ERROR_UPLOAD_FILE_MIME, $errpath);
+			}
 		}
 		
 		return $path;
@@ -2977,11 +3019,40 @@ abstract class elFinderVolumeDriver {
 	 * @author Troex Nevelin
 	 **/
 	protected function imgRotate($path, $degree, $bgcolor = '#ffffff', $destformat = null) {
-		if (($s = @getimagesize($path)) == false) {
+		if (($s = @getimagesize($path)) == false || $degree % 360 === 0) {
 			return false;
 		}
 
 		$result = false;
+
+		// try lossless rotate
+		if ($degree % 90 === 0 && in_array($s[2], array(IMAGETYPE_JPEG, IMAGETYPE_JPEG2000))) {
+			$count = ($degree / 90) % 4;
+			$exiftran = array(
+				1 => '-9',
+				2 => '-1',
+				3 => '-2'
+			);
+			$jpegtran = array(
+				1 => '90',
+				2 => '180',
+				3 => '270'
+			);
+			$quotedPath = escapeshellarg($path);
+			$cmds = array(
+				'exiftran -i '.$exiftran[$count].' '.$path,
+				'jpegtran -rotate '.$jpegtran[$count].' -copy all -outfile '.$quotedPath.' '.$quotedPath
+			);
+			foreach($cmds as $cmd) {
+				if ($this->procExec($cmd) === 0) {
+					$result = true;
+					break;
+				}
+			}
+			if ($result) {
+				return $path;
+			}
+		}
 
 		switch ($this->imgLib) {
 			case 'imagick':
