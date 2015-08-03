@@ -522,6 +522,13 @@ window.elFinder = function(node, opts) {
 	this.notifyDelay = this.options.notifyDelay > 0 ? parseInt(this.options.notifyDelay) : 500;
 	
 	/**
+	 * Dragging UI Helper object
+	 *
+	 * @type jQuery | null
+	 **/
+	this.draggingUiHelper = null,
+	
+	/**
 	 * Base draggable options
 	 *
 	 * @type Object
@@ -538,6 +545,7 @@ window.elFinder = function(node, opts) {
 		start      : function(e, ui) {
 			var targets = $.map(ui.helper.data('files')||[], function(h) { return h || null ;}),
 			cnt, h;
+			self.draggingUiHelper = ui.helper;
 			cnt = targets.length;
 			while (cnt--) {
 				h = targets[cnt];
@@ -547,12 +555,17 @@ window.elFinder = function(node, opts) {
 				}
 			}
 		},
-		stop       : function() { self.trigger('focus').trigger('dragstop'); },
+		stop       : function() { 
+			self.draggingUiHelper = null;
+			self.trigger('focus').trigger('dragstop');
+		},
 		helper     : function(e, ui) {
 			var element = this.id ? $(this) : $(this).parents('[id]:first'),
 				helper  = $('<div class="elfinder-drag-helper"><span class="elfinder-drag-helper-icon-plus"/></div>'),
 				icon    = function(mime) { return '<div class="elfinder-cwd-icon '+self.mime2class(mime)+' ui-corner-all"/>'; },
 				hashes, l;
+			
+			self.draggingUiHelper && self.draggingUiHelper.stop(true, true);
 			
 			self.trigger('dragstart', {target : element[0], originalEvent : e});
 			
@@ -1509,7 +1522,7 @@ window.elFinder = function(node, opts) {
 		.enable(function() {
 			if (!enabled && self.visible() && self.ui.overlay.is(':hidden')) {
 				enabled = true;
-				$('texarea:focus,input:focus,button').blur();
+				$('textarea:focus,input:focus,button').blur();
 				node.removeClass('elfinder-disabled');
 			}
 		})
@@ -1991,10 +2004,48 @@ elFinder.prototype = {
 	iframeCnt : 0,
 	
 	uploads : {
+		// check droped contents
+		checkFile : function(data) {
+			if (data.type == 'files') {
+				return data.files;
+			} else {
+				var ret = [];
+				var regex;
+				var str = data.files[0];
+				if (data.type == 'html') {
+					regex = /<img[^>]+src=["']?([^"'> ]+)/ig;
+					var m = [];
+					var url = '';
+					var links;
+					while (m = regex.exec(str)) {
+						url = m[1].replace(/&amp;/g, '&');
+						if (url.match(/^http/) && $.inArray(url, ret) == -1) ret.push(url);
+					}
+					links = str.match(/<\/a>/i);
+					if (links && links.length == 1) {
+						regex = /<a[^>]+href=["']?([^"'> ]+)((?:.|\s)+)<\/a>/i;
+						if (m = regex.exec(str)) {
+							if (! m[2].match(/<img/i)) {
+								url = m[1].replace(/&amp;/g, '&');
+								if (url.match(/^http/) && $.inArray(url, ret) == -1) ret.push(url);
+							}
+						}
+					}
+				} else {
+					regex = /(http[^<>"{}|\\^\[\]`\s]+)/ig;
+					while (m = regex.exec(str)) {
+						url = m[1].replace(/&amp;/g, '&');
+						if ($.inArray(url, ret) == -1) ret.push(url);
+					}
+				}
+				return ret;
+			}
+		},
 		// upload transport using iframe
 		iframe : function(data, fm) { 
 			var self   = fm ? fm : this,
-				input  = data.input,
+				input  = data.input? data.input : false,
+				files  = !input ? self.uploads.checkFile(data) : false,
 				dfrd   = $.Deferred()
 					.fail(function(error) {
 						error && self.error(error);
@@ -2051,14 +2102,18 @@ elFinder.prototype = {
 				cnt, notify, notifyto, abortto
 				
 				;
-			
-			if (input && $(input).is(':file') && $(input).val()) {
+
+			if (files && files.length) {
+				$.each(files, function(i, val) {
+					form.append('<input type="hidden" name="upload[]" value="'+val+'"/>');
+				});
+				cnt = 1;
+			} else if (input && $(input).is(':file') && $(input).val()) {
 				form.append(input);
+				cnt = input.files ? input.files.length : 1;
 			} else {
 				return dfrd.reject();
 			}
-			
-			cnt = input.files ? input.files.length : 1;
 			
 			form.append('<input type="hidden" name="'+(self.newAPI ? 'target' : 'current')+'" value="'+self.cwd().hash+'"/>')
 				.append('<input type="hidden" name="html" value="1"/>')
@@ -2098,7 +2153,7 @@ elFinder.prototype = {
 					}),
 				xhr         = new XMLHttpRequest(),
 				formData    = new FormData(),
-				files       = data.input ? data.input.files : data.files, 
+				files       = data.input ? data.input.files : self.uploads.checkFile(data), 
 				cnt         = files.length,
 				loaded      = 5,
 				notify      = false,
