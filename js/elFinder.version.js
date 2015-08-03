@@ -3,5 +3,5 @@
  *
  * @type String
  **/
-elFinder.prototype.version = '2.x github.com/jonnybradley/elFinder';
+elFinder.prototype.version = '2.1.0';
 

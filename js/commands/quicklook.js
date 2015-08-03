@@ -81,12 +81,14 @@ elFinder.prototype.commands.quicklook = function() {
 		 **/
 		openedCss = function() {
 			var win = $(window);
+			var w = Math.min(width, $(window).width()-10);
+			var h = Math.min(height, $(window).height()-80);
 			return {
 				opacity : 1,
-				width  : width,
-				height : height,
-				top    : parseInt((win.height() - height)/2 + win.scrollTop()),
-				left   : parseInt((win.width() - width)/2 + win.scrollLeft())
+				width  : w,
+				height : h,
+				top    : parseInt((win.height() - h - 60)/2 + win.scrollTop()),
+				left   : parseInt((win.width() - w)/2 + win.scrollLeft())
 			}
 		},
 		
@@ -133,7 +135,7 @@ elFinder.prototype.commands.quicklook = function() {
 		fsicon  = $('<div class="'+navicon+' '+navicon+'-fullscreen"/>')
 			.mousedown(function(e) {
 				var win     = self.window,
-					full    = win.is('.'+fullscreen),
+					full    = win.hasClass(fullscreen),
 					scroll  = 'scroll.'+fm.namespace,
 					$window = $(window);
 					
@@ -255,7 +257,7 @@ elFinder.prototype.commands.quicklook = function() {
 					$(this).css({opacity: 1.0});	// animate seems to mess this up
 				})
 				.mouseleave(function () {
-					$(this).css({opacity: 0.0})
+					$(this).css({opacity: 0.0});
 				})
 				.append(title)
 				.append($('<span class="ui-icon ui-icon-circle-close"/>').mousedown(function(e) {
@@ -298,7 +300,7 @@ elFinder.prototype.commands.quicklook = function() {
 				
 			if (self.opened()) {
 				state = animated;
-				win.is('.'+fullscreen) && fsicon.mousedown()
+				win.hasClass(fullscreen) && fsicon.mousedown()
 				node.length
 					? win.animate(closedCss(node), 500, close)
 					: close();
@@ -326,9 +328,11 @@ elFinder.prototype.commands.quicklook = function() {
 		'searchshow searchhide' : function() { this.opened() && this.window.trigger('close'); }
 	}
 	
-	this.shortcuts = [{
-		pattern     : 'space'
-	}];
+	if ( $.inArray('quicklook',this.fm.options.allowShortcuts) !== -1 ) {
+		this.shortcuts = [{
+			pattern     : 'space'
+		}];
+	}
 	
 	this.support = {
 		audio : {
@@ -389,7 +393,7 @@ elFinder.prototype.commands.quicklook = function() {
 				e.keyCode == 27 && self.opened() && win.trigger('close')
 			})
 			
-			if ($.fn.resizable) {
+			if ($.fn.resizable && !fm.UA.Touch) {
 				win.resizable({ 
 					handles   : 'se', 
 					minWidth  : 350, 

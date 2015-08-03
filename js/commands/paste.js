@@ -14,9 +14,11 @@ elFinder.prototype.commands.paste = function() {
 		changeclipboard : function() { this.update(); }
 	}
 
-	this.shortcuts = [{
-		pattern     : 'ctrl+v shift+insert'
-	}];
+	if ( $.inArray('paste',this.fm.options.allowShortcuts) !== -1 ) {
+		this.shortcuts = [{
+			pattern     : 'ctrl+v shift+insert'
+		}];
+	}
 	
 	this.getstate = function(dst) {
 		if (this._disabled) {
@@ -49,6 +51,9 @@ elFinder.prototype.commands.paste = function() {
 			dfrd   = $.Deferred()
 				.fail(function(error) {
 					error && fm.error(error);
+				})
+				.always(function() {
+					fm.unlockfiles({files : $.map(files, function(f) { return f.hash})});
 				}),
 			copy  = function(files) {
 				return files.length && fm._commands.duplicate

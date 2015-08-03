@@ -93,10 +93,12 @@ elFinder.prototype.commands.help = function() {
 	this.updateOnSelect = false;
 	this.state = 0;
 	
-	this.shortcuts = [{
-		pattern     : 'f1',
-		description : this.title
-	}];
+	if ( $.inArray('help',this.fm.options.allowShortcuts) !== -1 ) {
+		this.shortcuts = [{
+			pattern     : 'f1',
+			description : this.title
+		}];
+	}
 	
 	setTimeout(function() {
 		var parts = self.options.view || ['about', 'shortcuts', 'help'];
@@ -125,7 +127,7 @@ elFinder.prototype.commands.help = function() {
 				e.preventDefault();
 				e.stopPropagation();
 				
-				if (!link.is('.ui-tabs-selected')) {
+				if (!link.hasClass('ui-tabs-selected')) {
 					link.parent().addClass('ui-tabs-selected ui-state-active').siblings().removeClass('ui-tabs-selected').removeClass('ui-state-active');
 					content.find('.ui-tabs-panel').hide().filter(link.attr('href')).show();
 				}

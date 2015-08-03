@@ -88,6 +88,22 @@ elFinder.prototype._options = {
 	handlers : {},
 
 	/**
+	 * Any custom headers to send across every ajax request
+	 *
+	 * @type Object
+	 * @default {}
+	 */
+	customHeaders : {},
+
+	/**
+	 * Any custom xhrFields to send across every ajax request
+	 *
+	 * @type Object
+	 * @default {}
+	 */
+	xhrFields : {},
+
+	/**
 	 * Interface language
 	 *
 	 * @type String
@@ -109,9 +125,11 @@ elFinder.prototype._options = {
 	 * @type Array
 	 */
 	commands : [
+		'pixlr',
 		'open', 'reload', 'home', 'up', 'back', 'forward', 'getfile', 'quicklook', 
 		'download', 'rm', 'duplicate', 'rename', 'mkdir', 'mkfile', 'upload', 'copy', 
-		'cut', 'paste', 'edit', 'extract', 'archive', 'search', 'info', 'view', 'help', 'resize', 'sort', 'netmount'
+		'cut', 'paste', 'edit', 'extract', 'archive', 'search', 'info', 'view', 'help',
+		'resize', 'sort', 'netmount', 'netunmount', 'places', 'chmod'
 	],
 	
 	/**
@@ -178,14 +196,127 @@ elFinder.prototype._options = {
 				// 	 * @param  Object      wysisyg instance (if was returned by "load" callback)
 				// 	 * @return void
 				// 	 */
-				// 	save : function(textarea, editor) {}
+				// 	save : function(textarea, instance) {},
+				// 	/**
+				// 	 * Called after load() or save().
+				// 	 * Set focus to wysisyg editor.
+				// 	 *
+				// 	 * @param  DOMElement  textarea node
+				// 	 * @param  Object      wysisyg instance (if was returned by "load" callback)
+				// 	 * @return void
+				// 	 */
+				// 	focus : function(textarea, instance) {}
 				// 
 				// }
 			]
 		},
 		// "info" command options.
-		info : {nullUrlDirLinkSelf : true},
+		info : {
+			nullUrlDirLinkSelf : true,
+			custom : {
+				// /**
+				//  * Example of custom info `desc`
+				//  */
+				// desc : {
+				// 	/**
+				// 	 * Lable (require)
+				// 	 * It is filtered by the `fm.i18n()`
+				// 	 * 
+				// 	 * @type String
+				// 	 */
+				// 	label : 'Description',
+				// 	
+				// 	/**
+				// 	 * Template (require)
+				// 	 * `{id}` is replaced in dialog.id
+				// 	 * 
+				// 	 * @type String
+				// 	 */
+				// 	tpl : '<div class="elfinder-info-desc"><span class="elfinder-info-spinner"></span></div>',
+				// 	
+				// 	/**
+				// 	 * Restricts to mimetypes (optional)
+				// 	 * Exact match or category match
+				// 	 * 
+				// 	 * @type Array
+				// 	 */
+				// 	mimes : ['text', 'image/jpeg', 'directory'],
+				// 	
+				// 	/**
+				// 	 * Restricts to file.hash (optional)
+				// 	 * 
+				// 	 * @ type Regex
+				// 	 */
+				// 	hashRegex : /^l\d+_/,
+				// 
+				// 	/**
+				// 	 * Request that asks for the description and sets the field (optional)
+				// 	 * 
+				// 	 * @type Function
+				// 	 */
+				// 	action : function(file, fm, dialog) {
+				// 		fm.request({
+				// 		data : { cmd : 'desc', target: file.hash },
+				// 			preventDefault: true,
+				// 		})
+				// 		.fail(function() {
+				// 			dialog.find('div.elfinder-info-desc').html(fm.i18n('unknown'));
+				// 		})
+				// 		.done(function(data) {
+				// 			dialog.find('div.elfinder-info-desc').html(data.desc);
+				// 		});
+				// 	}
+				// }
+			}
+		},
 		
+		netmount: {
+			ftp: {
+				inputs: {
+					host     : $('<input type="text"/>'),
+					port     : $('<input type="text" placeholder="21"/>'),
+					path     : $('<input type="text" value="/"/>'),
+					user     : $('<input type="text"/>'),
+					pass     : $('<input type="password"/>'),
+					encoding : $('<input type="text" placeholder="Optional"/>'),
+					locale   : $('<input type="text" placeholder="Optional"/>')
+				}
+			},
+			dropbox: {
+				inputs: {
+					host     : $('<span><span class="elfinder-info-spinner"/></span></span><input type="hidden"/>'),
+					path     : $('<input type="text" value="/"/>'),
+					user     : $('<input type="hidden"/>'),
+					pass     : $('<input type="hidden"/>')
+				},
+				select: function(fm){
+					var self = this;
+					if (self.inputs.host.find('span').length) {
+						fm.request({
+							data : {cmd : 'netmount', protocol: 'dropbox', host: 'dropbox.com', user: 'init', pass: 'init', options: {url: fm.uploadURL, id: fm.id}},
+							preventDefault : true
+						}).done(function(data){
+							self.inputs.host.find('span').removeClass("elfinder-info-spinner");
+							self.inputs.host.find('span').html(data.body.replace(/\{msg:([^}]+)\}/g, function(whole,s1){return fm.i18n(s1,'Dropbox.com');}));
+						}).fail(function(){});
+					}					
+				},
+				done: function(fm, data){
+					var self = this;
+					if (data.mode == 'makebtn') {
+						self.inputs.host.find('span').removeClass("elfinder-info-spinner");
+						self.inputs.host.find('input').hover(function(){$(this).toggleClass("ui-state-hover");});
+						self.inputs.host[1].value = "";
+					} else {
+						self.inputs.host.find('span').removeClass("elfinder-info-spinner");
+						self.inputs.host.find('span').html("Dropbox.com");
+						self.inputs.host[1].value = "dropbox";
+						self.inputs.user.val("done");
+						self.inputs.pass.val("done");
+					}
+				}
+			}
+		},
 
 		help : {view : ['about', 'shortcuts', 'help']}
 	},
@@ -206,6 +337,14 @@ elFinder.prototype._options = {
 	 * @default "icons"
 	 */
 	defaultView : 'icons',
+	
+	/**
+	 * Hash of default directory path to open
+	 * 
+	 * @type String
+	 * @default ""
+	 */
+	startPathHash : '',
 	
 	/**
 	 * UI plugins to load.
@@ -231,11 +370,11 @@ elFinder.prototype._options = {
 			// ['home', 'up'],
 			['mkdir', 'mkfile', 'upload'],
 			['open', 'download', 'getfile'],
-			['info'],
+			['info', 'chmod'],
 			['quicklook'],
 			['copy', 'cut', 'paste'],
 			['rm'],
-			['duplicate', 'rename', 'edit', 'resize'],
+			['duplicate', 'rename', 'edit', 'resize', 'pixlr'],
 			['extract', 'archive'],
 			['search'],
 			['view', 'sort'],
@@ -247,6 +386,17 @@ elFinder.prototype._options = {
 			openRootOnLoad : true,
 			// auto load current dir parents
 			syncTree : true
+			// ,
+			// /**
+			//  * Add CSS class name to navbar directories (optional)
+			//  * see: https://github.com/Studio-42/elFinder/pull/1061
+			//  * 
+			//  * @type Function
+			//  */
+			// getClass: function(dir) {
+			// 	// ex. This adds the directory's name (lowercase) with prefix as a CSS class
+			// 	return 'elfinder-tree-' + dir.name.replace(/[ "]/g, '').toLowerCase();
+			// }
 		},
 		// navbar options
 		navbar : {
@@ -255,7 +405,24 @@ elFinder.prototype._options = {
 		},
 		cwd : {
 			// display parent folder with ".." name :)
-			oldSchool : false
+			oldSchool : false,
+			
+			// file info columns displayed
+			listView : {
+				// name is always displayed, cols are ordered
+				// ex. ['perm', 'date', 'size', 'kind', 'owner', 'group', 'mode']
+				// mode: 'mode'(by `fileModeStyle` setting), 'modestr'(rwxr-xr-x) , 'modeoct'(755), 'modeboth'(rwxr-xr-x (755))
+				// 'owner', 'group' and 'mode', It's necessary set volume driver option "statOwner" to `true`
+				columns : ['perm', 'date', 'size', 'kind'],
+				// override this if you want custom columns name
+				// example
+				// columnsCustomName : {
+				//		date : 'Last modification',
+				// 		kind : 'Mime type'
+				// }
+				columnsCustomName : {}
+									
+			}
 		}
 	},
 
@@ -344,6 +511,15 @@ elFinder.prototype._options = {
 	fancyDateFormat : '',
 	
 	/**
+	 * Style of file mode at cwd-list, info dialog
+	 * 'string' (ex. rwxr-xr-x) or 'octal' (ex. 755) or 'both' (ex. rwxr-xr-x (755))
+	 * 
+	 * @type {String}
+	 * @default 'both'
+	 */
+	fileModeStyle : 'both',
+	
+	/**
 	 * elFinder width
 	 *
 	 * @type String|Number
@@ -376,12 +552,23 @@ elFinder.prototype._options = {
 	notifyDelay : 500,
 	
 	/**
+	 * Position CSS, Width of notifications dialogs
+	 *
+	 * @type Object
+	 * @default {position: {top : '12px', right : '12px'}, width : 280}
+	 * position: CSS object | null (null: position center & middle)
+	 */
+	notifyDialog : {position: {top : '12px', right : '12px'}, width : 280},
+	
+	/**
 	 * Allow shortcuts
 	 *
-	 * @type Boolean
-	 * @default  true
+	 * @type Array
 	 */
-	allowShortcuts : true,
+	allowShortcuts : [
+		'open', 'reload', 'home', 'up', 'back', 'forward', 'quicklook', 'download', 'rm', 'rename', 'mkdir', 'upload',
+		'copy', 'cut', 'paste', 'edit', 'info', 'help', 'select', 'selectall', 'firstfile', 'lastfile'
+	],
 	
 	/**
 	 * Remeber last opened dir to open it after reload or in next session
@@ -390,6 +577,15 @@ elFinder.prototype._options = {
 	 * @default  true
 	 */
 	rememberLastDir : true,
+	
+	/**
+	 * Clear historys(elFinder) on reload(not browser) function
+	 * Historys was cleared on Reload function on elFinder 2.0 (value is true)
+	 * 
+	 * @type Boolean
+	 * @default  false
+	 */
+	reloadClearHistory : false,
 	
 	/**
 	 * Use browser native history with supported browsers
@@ -464,11 +660,11 @@ elFinder.prototype._options = {
 	 */
 	contextmenu : {
 		// navbarfolder menu
-		navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'info'],
+		navbar : ['open', '|', 'upload', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'rename', '|', 'places', 'info', 'chmod', 'netunmount'],
 		// current directory menu
 		cwd    : ['reload', 'back', '|', 'upload', 'mkdir', 'mkfile', 'paste', '|', 'sort', '|', 'info'],
 		// current directory file menu
-		files  : ['getfile', '|','open', 'quicklook', '|', 'download', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'edit', 'rename', 'resize', '|', 'archive', 'extract', '|', 'info']
+		files  : ['getfile', '|','open', 'quicklook', '|', 'download', 'upload', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'edit', 'rename', 'resize', 'pixlr', '|', 'archive', 'extract', '|', 'places', 'info', 'chmod']
 	},
 
 	/**

@@ -60,13 +60,13 @@ $.fn.dialogelfinder = function(opts, overrides) {
 
 		if (node.is(':hidden')) {
 			var zSet = false;
-			if(typeof overrides === 'object'){
-				if("zIndex" in overrides){
+			if (typeof overrides === 'object') {
+				if ("zIndex" in overrides) {
 					zindex = overrides.zIndex;
 					zSet = true;
 				}	
 			}
-			if(!zSet){
+			if (!zSet) {
 				$('body').find(':visible').each(function() {
 					var $this = $(this), z;
 					
@@ -76,7 +76,7 @@ $.fn.dialogelfinder = function(opts, overrides) {
 				});
 			}
 
-			node.zIndex(zindex).css(pos).show().trigger('resize')
+			node.zIndex(zindex).css(pos).show().trigger('resize');
 
 			setTimeout(function() {
 				// fix resize icon position and make elfinder active
@@ -96,5 +96,5 @@ $.fn.dialogelfinder = function(opts, overrides) {
 	}
 
 	return this;
-}
+};
 
