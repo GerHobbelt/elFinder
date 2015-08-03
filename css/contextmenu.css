@@ -24,6 +24,19 @@
 	white-space:nowrap;
 	cursor:default;
 }
+.elfinder-contextmenu-item .ui-icon {
+	width:16px;
+	height:16px;
+	position:absolute;
+	left:2px;
+	top:50%;
+	margin-top:-8px;
+	display:none;
+}
+.elfinder-contextmenu-item.elfinder-touch {
+	padding:12px 30px;
+}
+
 /* text in item */
 .elfinder-contextmenu .elfinder-contextmenu-item span { display:block; }
 

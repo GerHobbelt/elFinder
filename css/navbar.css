@@ -16,7 +16,13 @@
 	-khtml-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
 /*	border:1px solid #111;*/
+	-webkit-touch-callout:none;
+	user-select:          none;
+	-webkit-user-select:  none;
+	-moz-user-select:     none;
+	-khtml-user-select:   none;
 }
 
 
@@ -26,7 +32,10 @@
 .elfinder-ltr .ui-resizable-e { margin-left:10px; }
 
 /* folders tree container */
-.elfinder-tree { display:table; width:100%; margin: 0 0 .5em 0; }
+.elfinder-tree {
+	display:table; width:100%; margin: 0 0 .5em 0;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
+}
 
 /* one folder wrapper */
 .elfinder-navbar-wrapper, .elfinder-place-wrapper { }
@@ -41,7 +50,9 @@
 	outline:0px solid;
 	border:1px solid transparent;
 	cursor:default;
-	
+}
+.elfinder-navbar-dir.elfinder-touch {
+	padding: 12px 12px;
 }
 
 /* ltr/rtl enviroment */
@@ -91,7 +102,7 @@
 
 /* root folder */
 .elfinder-tree   .elfinder-navbar-root .elfinder-navbar-icon { background-position:0 0; }
-.elfinder-places .elfinder-navbar-root .elfinder-navbar-icon { background-position:0 -48px; }
+.elfinder-places .elfinder-navbar-root .elfinder-navbar-icon { background-position:0 -704px; }
 
 /* icon in active/hove/dropactive state */
 .ui-state-active           .elfinder-navbar-icon, 
@@ -134,8 +145,11 @@
 .elfinder-ltr .elfinder-navbar .elfinder-symlink { left:  8px; }
 .elfinder-rtl .elfinder-navbar .elfinder-symlink { right: 8px; }
 
+/* navbar input */
+.elfinder-navbar input { width:100%; border:0px solid; margin:0; padding:0; }
+
 /* resizable */
-.elfinder-navbar .ui-resizable-handle { width:12px; background:transparent url('../img/resize.png') center center no-repeat; left:0; }
+.elfinder-navbar .ui-resizable-handle { width:12px; background:transparent url('../img/resize.png') center center no-repeat; }
 .elfinder-nav-handle-icon {
 	position:absolute;
 	top:50%;
@@ -143,9 +157,13 @@
 	opacity: .5; filter:Alpha(Opacity=50);
 }
 
-.elfinder-places { border:1px solid transparent;}
+.elfinder-places {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
 .elfinder-places.elfinder-droppable-active {
-	border:1px solid #8cafed;
+	/*border:1px solid #8cafed;*/
 }
 
 

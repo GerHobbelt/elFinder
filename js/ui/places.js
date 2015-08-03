@@ -16,6 +16,7 @@ $.fn.elfinderplaces = function(fm, opts) {
 			tpl       = fm.res('tpl', 'navdir'),
 			ptpl      = fm.res('tpl', 'perms'),
 			spinner   = $(fm.res('tpl', 'navspinner')),
+			key       = 'places'+(opts.suffix? opts.suffix : ''),
 			/**
 			 * Convert places dir node into dir hash
 			 *
@@ -36,7 +37,7 @@ $.fn.elfinderplaces = function(fm, opts) {
 			 *
 			 * @return void
 			 **/
-			save      = function() { fm.storage('places', dirs.join(',')); },
+			save      = function() { fm.storage(key, dirs.join(',')); },
 			/**
 			 * Return node for given dir object
 			 *
@@ -46,7 +47,7 @@ $.fn.elfinderplaces = function(fm, opts) {
 			create    = function(dir) {
 				return $(tpl.replace(/\{id\}/, hash2id(dir.hash))
 						.replace(/\{name\}/, fm.escape(dir.name))
-						.replace(/\{cssclass\}/, fm.perms2class(dir))
+						.replace(/\{cssclass\}/, (fm.UA.Touch ? 'elfinder-touch ' : '')+fm.perms2class(dir))
 						.replace(/\{permissions\}/, !dir.read || !dir.write ? ptpl : '')
 						.replace(/\{symlink\}/, ''));
 			},
@@ -57,6 +58,11 @@ $.fn.elfinderplaces = function(fm, opts) {
 			 * @return void
 			 **/
 			add = function(dir) {
+				if (!fm.files().hasOwnProperty(dir.hash)) {
+					// update cache
+					fm.trigger('tree', {tree: [dir]});
+				}
+				
 				var node = create(dir);
 
 				if (subtree.children().length) {
@@ -107,16 +113,22 @@ $.fn.elfinderplaces = function(fm, opts) {
 			 * Remove dir from places
 			 *
 			 * @param  String  directory id
-			 * @return void
+			 * @return String  removed name
 			 **/
 			remove = function(hash) {
-				var ndx = $.inArray(hash, dirs);
+				var ndx = $.inArray(hash, dirs), name, tgt;
 
 				if (ndx !== -1) {
 					dirs.splice(ndx, 1);
-					subtree.find('#'+hash2id(hash)).parent().remove();
-					!subtree.children().length && root.removeClass(collapsed+' '+expanded);
+					tgt = subtree.find('#'+hash2id(hash));
+					if (tgt.length) {
+						name = tgt.text();
+						tgt.parent().remove();
+						!subtree.children().length && root.removeClass(collapsed+' '+expanded);
+					}
 				}
+				
+				return name;
 			},
 			/**
 			 * Remove all dir from places
@@ -146,10 +158,10 @@ $.fn.elfinderplaces = function(fm, opts) {
 			root = wrapper.children('.'+navdir)
 				.addClass(clroot)
 				.click(function() {
-					if (root.is('.'+collapsed)) {
+					if (root.hasClass(collapsed)) {
 						places.toggleClass(expanded);
 						subtree.slideToggle();
-						fm.storage('placesState', places.is('.'+expanded)? 1 : 0);
+						fm.storage('placesState', places.hasClass(expanded)? 1 : 0);
 					}
 				}),
 			/**
@@ -167,11 +179,16 @@ $.fn.elfinderplaces = function(fm, opts) {
 				.hide()
 				.append(wrapper)
 				.appendTo(fm.getUI('navbar'))
-				.delegate('.'+navdir, 'mouseenter mouseleave', function() {
-					$(this).toggleClass('ui-state-hover');
+				.delegate('.'+navdir, 'mouseenter mouseleave', function(e) {
+					$(this).toggleClass('ui-state-hover', (e.type == 'mouseenter'));
 				})
 				.delegate('.'+navdir, 'click', function(e) {
-					fm.exec('open', $(this).attr('id').substr(6));
+					var p = $(this);
+					if (p.data('longtap')) {
+						e.stopPropagation();
+						return;
+					}
+					fm.exec('open', p.attr('id').substr(6));
 				})
 				.delegate('.'+navdir+':not(.'+clroot+')', 'contextmenu', function(e) {
 					var hash = $(this).attr('id').substr(6);
@@ -208,7 +225,43 @@ $.fn.elfinderplaces = function(fm, opts) {
 						save();
 						resolve && ui.helper.hide();
 					}
+				})
+				// for touch device
+				.on('touchstart', '.'+navdir+':not(.'+clroot+')', function(e) {
+					var hash = $(this).attr('id').substr(6),
+					p = $(this)
+					.addClass(hover)
+					.data('longtap', null)
+					.data('tmlongtap', setTimeout(function(){
+						// long tap
+						p.data('longtap', true);
+						fm.trigger('contextmenu', {
+							raw : [{
+								label    : fm.i18n('rmFromPlaces'),
+								icon     : 'rm',
+								callback : function() { remove(hash); save(); }
+							}],
+							'x'       : e.originalEvent.touches[0].clientX,
+							'y'       : e.originalEvent.touches[0].clientY
+						});
+					}, 500));
+				})
+				.on('touchmove touchend', '.'+navdir+':not(.'+clroot+')', function(e) {
+					clearTimeout($(this).data('tmlongtap'));
+					if (e.type == 'touchmove') {
+						$(this).removeClass(hover);
+					}
 				});
+
+		// "on regist" for command exec
+		$(this).on('regist', function(e, files){
+			$.each(files, function(i, dir) {
+				if (dir && dir.mime == 'directory' && $.inArray(dir.hash, dirs) === -1) {
+					add(dir);
+				}
+			});
+			save();
+		});
 	
 
 		// on fm load - show places and load files from backend
@@ -219,7 +272,7 @@ $.fn.elfinderplaces = function(fm, opts) {
 			
 			places.show().parent().show();
 
-			dirs = $.map(fm.storage('places').split(','), function(hash) { return hash || null});
+			dirs = $.map((fm.storage(key) || '').split(','), function(hash) { return hash || null;});
 			
 			if (dirs.length) {
 				root.prepend(spinner);
@@ -244,19 +297,29 @@ $.fn.elfinderplaces = function(fm, opts) {
 			}
 			
 
-			fm.remove(function(e) {
-				$.each(e.data.removed, function(i, hash) {
-					remove(hash);
-				});
-				save();
-			})
-			.change(function(e) {
+			fm.change(function(e) {
 				$.each(e.data.changed, function(i, file) {
 					if ($.inArray(file.hash, dirs) !== -1) {
 						remove(file.hash);
 						file.mime == 'directory' && add(file);
 					}
 				});
+				save();
+			})
+			.bind('rm paste', function(e){
+				var names = [];
+				if (e.data.removed) {
+					$.each(e.data.removed, function(i, hash) {
+						names.push(remove(hash));
+					});
+				}
+				if (e.data.added) {
+					$.each(e.data.added, function(i, file) {
+						if ($.inArray(file.name, names) !== 1) {
+							file.mime == 'directory' && add(file);
+						}
+					});
+				}
 				save();
 			})
 			.bind('sync', function() {
@@ -271,6 +334,10 @@ $.fn.elfinderplaces = function(fm, opts) {
 						$.each(data.files || [], function(i, file) {
 							if ($.inArray(file.hash, dirs) === -1) {
 								remove(file.hash);
+							}
+							if (!fm.files().hasOwnProperty(file.hash)) {
+								// update cache
+								fm.trigger('tree', {tree: [file]});
 							}
 						});
 						save();

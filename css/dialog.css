@@ -45,6 +45,7 @@
 
 .std42-dialog .ui-dialog-buttonpane button { margin:0 0 0 .4em;	padding:0; outline:0px solid; }
 .std42-dialog .ui-dialog-buttonpane button span { padding:2px 9px; }
+.std42-dialog .ui-dialog-buttonpane button span.ui-icon { padding: 2px; }
 
 .elfinder-dialog .ui-resizable-e, 
 .elfinder-dialog .ui-resizable-s { width:0; height:0;}
@@ -126,6 +127,7 @@
 .elfinder-dialog-icon-prepare,
 .elfinder-dialog-icon-move        { background-position: 0 -128px;}
 .elfinder-dialog-icon-upload      { background-position: 0 -160px; }
+.elfinder-dialog-icon-chunkmerge  { background-position: 0 -160px; }
 .elfinder-dialog-icon-rm          { background-position: 0 -192px; }
 .elfinder-dialog-icon-download    { background-position: 0 -260px; }
 .elfinder-dialog-icon-save        { background-position: 0 -295px; }
@@ -137,6 +139,7 @@
 .elfinder-dialog-icon-loadimg,
 .elfinder-dialog-icon-netmount,
 .elfinder-dialog-icon-netunmount,
+.elfinder-dialog-icon-chmod,
 .elfinder-dialog-icon-dim         { background-position: 0 -434px; }
 
 /*********************** CONFIRM DIALOG **************************/
@@ -188,6 +191,8 @@
 	text-align:center;
 	padding:2em 0;
 	border:3px dashed #aaa;
+	height: 1em;
+	overflow: hidden;
 }
 
 .elfinder-upload-dropbox.ui-state-hover {
