@@ -264,23 +264,27 @@ class elFinder {
 			if (class_exists($class)) {
 				$volume = new $class();
 
-				if ($volume->mount($o)) {
-					// unique volume id (ends on "_") - used as prefix to files hash
-					$id = $volume->id();
-					
-					$this->volumes[$id] = $volume;
-					if (!$this->default && $volume->isReadable()) {
-						$this->default = $this->volumes[$id]; 
+				try {
+					if ($volume->mount($o)) {
+						// unique volume id (ends on "_") - used as prefix to files hash
+						$id = $volume->id();
+						
+						$this->volumes[$id] = $volume;
+						if (!$this->default && $volume->isReadable()) {
+							$this->default = $this->volumes[$id]; 
+						}
+					} else {
+						$this->mountErrors[] = 'Driver "'.$class.'" : '.implode(' ', $volume->error());
 					}
-				} else {
-					$this->mountErrors[] = 'Driver "'.$class.'" : '.implode(' ', $volume->error());
+				} catch (Exception $e) {
+					$this->mountErrors[] = 'Driver "'.$class.'" : '.$e->getMessage();
 				}
 			} else {
 				$this->mountErrors[] = 'Driver "'.$class.'" does not exists';
 			}
 		}
 
-		// if at least one redable volume - ii desu >_<
+		// if at least one readable volume - ii desu >_<
 		$this->loaded = !empty($this->default);
 	}
 	
@@ -1230,11 +1234,12 @@ class elFinder {
 		$target = $args['target'];
 		$volume = $this->volume($target);
 		$files  = isset($args['FILES']['upload']) && is_array($args['FILES']['upload']) ? $args['FILES']['upload'] : array();
-		$result = array('added' => array(), 'header' => empty($args['html']) ? false : 'Content-Type: text/html; charset=utf-8');
+		$header = empty($args['html']) ? array() : array('header' => 'Content-Type: text/html; charset=utf-8');
+		$result = array_merge(array('added' => array()), $header);
 		$paths = $args['upload_path']? $args['upload_path'] : array();
 		
 		if (!$volume) {
-			return array('error' => $this->error(self::ERROR_UPLOAD, self::ERROR_TRGDIR_NOT_FOUND, '#'.$target), 'header' => $header);
+			return array_merge(array('error' => $this->error(self::ERROR_UPLOAD, self::ERROR_TRGDIR_NOT_FOUND, '#'.$target)), $header);
 		}
 		
 		// file extentions table by MIME
@@ -1283,7 +1288,7 @@ class elFinder {
 				}
 			}
 			if (empty($files)) {
-				return array('error' => $this->error(self::ERROR_UPLOAD, self::ERROR_UPLOAD_NO_FILES), 'header' => $header);
+				return array_merge(array('error' => $this->error(self::ERROR_UPLOAD, self::ERROR_UPLOAD_NO_FILES)), $header);
 			}
 		}
 		
