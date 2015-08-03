@@ -663,7 +663,7 @@ window.elFinder = function(node, opts) {
 				hashes, l;
 
 			self.draggingUiHelper && self.draggingUiHelper.stop(true, true);
-			
+
 			self.trigger('dragstart', {target : element[0], originalEvent : e});
 
 			hashes = element.hasClass(self.res('class', 'cwdfile')) 
