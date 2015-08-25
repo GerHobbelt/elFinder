@@ -1,11 +1,52 @@
+thead td {
+	background-color: #ebebeb;
+}
+
+  /****************************************/
+ /*             CSS FONTS				 */
+/****************************************/
+
+.elfinder-contextmenu .elfinder-contextmenu-item span { font-size:14px; }
+.elfinder-cwd-view-icons .elfinder-cwd-filename { font-size:14px; }
+.elfinder-cwd-view-list td { font-size:14px; }
+.std42-dialog .ui-dialog-titlebar { font-size:20px; padding: 10px; }
+.std42-dialog .ui-dialog-content { font-size:14px; }
+.std42-dialog .ui-dialog-buttonpane { font-size:14px; }
+.elfinder-info-tb { font-size:14px; }
+.elfinder .elfinder-navbar { font-size: 14px; }
+.elfinder-quicklook-title { font-size:14px; }
+.elfinder-quicklook-info-data { font-size:14px; }
+.elfinder-button-menu-item { font-size:14px; }
+.elfinder-statusbar div { font-size:14px; }
+
+  /****************************************/
+ /*             CSS QUICKLOOK			 */
+/****************************************/
+
+.elfinder-quicklook-titlebar {
+	padding: 5px;
+	height: inherit;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
+.elfinder-quicklook {
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
+.elfinder-quicklook-navbar {
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
 
   /****************************************/
  /*             CSS NAVBAR				 */
 /****************************************/
 
-.elfinder-navbar-dir { 
-	color: white;
-}
+.elfinder-navbar-dir { padding:8px 12px; }
+.elfinder .elfinder-navbar { padding: 0px; }
 
 .elfinder-navbar-icon-rendu{background-position:0 -737px; }
 .elfinder-navbar-icon-profs{background-position:0 -721px; }
@@ -26,27 +67,37 @@
 .elfinder-droppable-active .elfinder-navbar-icon-profs, 
 .ui-state-hover            .elfinder-navbar-icon-profs { background-position:0 -721px; }
 
-
   /****************************************/
  /*             CSS THEME				 */
 /****************************************/
 
 /* theme navbar */
 
-.elfinder .elfinder-navbar {background: #6e6e6e;}
+.std42-dialog, .std42-dialog .ui-widget-content {background-image:none; background-color: white;}
+.elfinder .elfinder-navbar {background: white; border-right: 1px solid #bbb;}
 
-.elfinder-navbar .ui-state-active { background: #1aa1cb; border-color:#1aa1cb; color:#fff; }
+.elfinder-navbar .ui-state-active { background: #019bc6; border-color:#019bc6; color:#fff; }
 
 /* selected file in "icons" view */
-.elfinder-cwd-view-icons .elfinder-cwd-file .ui-state-hover { background:#fff;  border:1px solid #1aa1cb;}
+.elfinder-cwd-view-icons .elfinder-cwd-file .ui-state-hover { background:#fff;  border:1px solid #019bc6;}
 
 /* selected list view */
 .elfinder-cwd-view-icons .elfinder-cwd-file .elfinder-cwd-filename.ui-state-hover,
 .elfinder-cwd table td.ui-state-hover,
-.elfinder-button-menu .ui-state-hover { background: #1aa1cb; color:#fff;}
+.elfinder-button-menu .ui-state-hover { background: #019bc6; color:#fff;}
+
+.elfinder-cwd table tr > td.ui-state-hover:first-child {
+	border-left-width: 4px;
+    border-left-color: #FF5F00;
+}
+
 
 /* contextmenu */
-.elfinder-contextmenu .ui-state-hover { background: #1aa1cb; color:#fff; }
+.elfinder-contextmenu .ui-state-hover { background: #019bc6; color:#fff; }
+.elfinder-contextmenu-item { padding:8px 30px; }
+
+.elfinder-cwd table tr:nth-child(odd) { background-color:transparent; }
+
 
   /****************************************/
  /*             CSS COMMUN				 */
@@ -54,6 +105,7 @@
 
 /* public file */
 .elfinder-pb .elfinder-perms { background-position:0 -48px;}
+.elfinder { border-width: 0px; }
 
   /****************************************/
  /*             CSS CWD				     */
@@ -68,6 +120,8 @@
 .elfinder-cwd-icon-x-javascript      { background-position: 0 -150px; }
 .elfinder-cwd-icon-x-perl            { background-position: 0 -150px; }
 .elfinder-cwd-icon-x-python          { background-position: 0 -150px; }
+.elfinder .elfinder-cwd table td { padding:8px 12px; }
+.elfinder-cwd-view-icons .elfinder-cwd-filename { -moz-border-radius: 0px; -webkit-border-radius: 0px; border-radius: 0px; }
 
   /****************************************/
  /*             CSS TOOLBAR 		     */
@@ -75,3 +129,43 @@
 
 .elfinder-button-icon-rights    { background-position: 0 -657px; }
 .elfinder-button-icon-share     { background-position: 0 -673px; }
+
+.elfinder-buttonset {
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+}
+.elfinder-button {
+	cursor: pointer;
+}
+.elfinder .elfinder-button { padding:12px; }
+.elfinder-button:first-child {
+	-moz-border-radius-topleft: 0px;
+	-webkit-border-top-left-radius: 0px;
+	border-top-left-radius: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+.elfinder-button:last-child {
+	-moz-border-radius-topright: 0px;
+	-webkit-border-top-right-radius: 0px;
+	border-top-right-radius: 0px;
+	-moz-border-radius-bottomright: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+.elfinder-toolbar-button-separator { height:40px; }
+.elfinder-button-search input {
+	height: inherit;
+	font-size: 18px;
+	padding: 8px 20px;
+	border: 1px solid #aaa;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+}
+.elfinder .elfinder-button-search {
+	padding: 0px;
+}
+
