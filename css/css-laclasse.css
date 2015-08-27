@@ -6,11 +6,11 @@ thead td {
  /*             CSS FONTS				 */
 /****************************************/
 
-.elfinder-contextmenu .elfinder-contextmenu-item span { font-size:14px; }
+.elfinder-contextmenu .elfinder-contextmenu-item span { font-size:16px; }
 .elfinder-cwd-view-icons .elfinder-cwd-filename { font-size:14px; }
 .elfinder-cwd-view-list td { font-size:14px; }
 .std42-dialog .ui-dialog-titlebar { font-size:20px; padding: 10px; }
-.std42-dialog .ui-dialog-content { font-size:14px; }
+.std42-dialog .ui-dialog-content { font-size:16px; }
 .std42-dialog .ui-dialog-buttonpane { font-size:14px; }
 .elfinder-info-tb { font-size:14px; }
 .elfinder .elfinder-navbar { font-size: 14px; }
@@ -18,6 +18,16 @@ thead td {
 .elfinder-quicklook-info-data { font-size:14px; }
 .elfinder-button-menu-item { font-size:14px; }
 .elfinder-statusbar div { font-size:14px; }
+
+  /****************************************/
+ /*             CSS DIALOG				 */
+/****************************************/
+
+.std42-dialog .ui-dialog-buttonpane button {
+	text-transform: uppercase;
+	min-width: 120px;
+    padding: 9px;
+}
 
   /****************************************/
  /*             CSS QUICKLOOK			 */
@@ -84,7 +94,10 @@ thead td {
 /* selected list view */
 .elfinder-cwd-view-icons .elfinder-cwd-file .elfinder-cwd-filename.ui-state-hover,
 .elfinder-cwd table td.ui-state-hover,
-.elfinder-button-menu .ui-state-hover { background: #019bc6; color:#fff;}
+.elfinder-button-menu .ui-state-hover {
+	background: #019bc6; color:#fff;border-top: 2px solid #019bc6;
+    border-bottom: 2px solid #019bc6;
+}
 
 .elfinder-cwd table tr > td.ui-state-hover:first-child {
 	border-left-width: 4px;
@@ -94,7 +107,7 @@ thead td {
 
 /* contextmenu */
 .elfinder-contextmenu .ui-state-hover { background: #019bc6; color:#fff; }
-.elfinder-contextmenu-item { padding:8px 30px; }
+.elfinder-contextmenu-item { padding:10px 30px; }
 
 .elfinder-cwd table tr:nth-child(odd) { background-color:transparent; }
 

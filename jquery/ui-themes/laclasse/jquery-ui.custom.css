@@ -513,6 +513,9 @@ button.ui-button::-moz-focus-inner {
 .ui-dialog .ui-dialog-buttonpane button {
 	margin: .5em .4em .5em 0;
 	cursor: pointer;
+	text-transform: uppercase;
+	border: 1px solid grey;
+	box-shadow: none;
 }
 .ui-dialog .ui-resizable-se {
 	width: 12px;
